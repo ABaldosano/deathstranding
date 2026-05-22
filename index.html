@@ -3,859 +3,813 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BRIDGES — Connect. Deliver. Survive.</title>
+<title>BRIDGES — DEATH STRANDING // RECONNECT PROTOCOL ACTIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" type="image/png" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600&family=Barlow:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --black:#060708;
-  --deep:#0a0c0f;
+  --void:#060608;
+  --deep:#0a0c10;
   --slate:#111418;
   --ash:#1a1e24;
   --mist:#8a9aaa;
   --fog:#b8c8d4;
   --ice:#dde8ee;
-  --white:#eef4f8;
-  --cyan:#3dd8d8;
-  --cyan-dim:#1a6b6b;
+  --ghost:#eef4f8;
+  --strand-warm:#c8b89a;
+  --strand-cold:#3dd8d8;
+  --strand-cold-dim:#1a6b6b;
   --amber:#c8850a;
   --amber-glow:#e8a020;
-  --hologram:rgba(61,216,216,0.08);
-  --strand:rgba(61,216,216,0.4);
+  --gold:rgba(212,175,55,0.15);
+  --cold-glow:rgba(61,216,216,0.08);
+  --warm-glow:rgba(200,184,154,0.12);
+  --ff-display:'Bebas Neue',sans-serif;
+  --ff-body:'Cormorant Garamond',serif;
+  --ff-mono:'Share Tech Mono',monospace;
+  --ff-ui:'Rajdhani',sans-serif;
+  --ff-bar:'Barlow',sans-serif;
 }
-html{scroll-behavior:smooth;overflow-x:hidden;}
-body{
-  background:var(--black);
-  color:var(--fog);
-  font-family:'Rajdhani',sans-serif;
-  font-weight:400;
-  overflow-x:hidden;
-  cursor:none;
-}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--void);color:var(--fog);font-family:var(--ff-body);overflow-x:hidden;cursor:none}
 
-/* CUSTOM CURSOR */
-.cursor{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--cyan);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,opacity 0.3s;mix-blend-mode:screen;}
-.cursor-ring{position:fixed;width:32px;height:32px;border-radius:50%;border:1px solid rgba(61,216,216,0.5);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.15s ease,width 0.3s,height 0.3s,opacity 0.3s;mix-blend-mode:screen;}
-
-/* CANVAS */
-canvas#rain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0.35;}
-canvas#strands{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:0.6;}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:2px;}
-::-webkit-scrollbar-track{background:var(--black);}
-::-webkit-scrollbar-thumb{background:var(--cyan-dim);}
-
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:28px 60px;
-  background:linear-gradient(to bottom,rgba(6,7,8,0.9),transparent);
-}
-.nav-logo{
-  font-family:'Share Tech Mono',monospace;
-  font-size:13px;letter-spacing:0.4em;
-  color:var(--cyan);text-transform:uppercase;
-}
-.nav-logo span{color:var(--mist);}
-.nav-links{display:flex;gap:48px;align-items:center;}
-.nav-links a{
-  font-family:'Rajdhani',sans-serif;font-size:11px;
-  letter-spacing:0.35em;text-transform:uppercase;
-  color:var(--mist);text-decoration:none;
-  transition:color 0.4s;position:relative;
-}
-.nav-links a::after{
-  content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;
-  background:var(--cyan);transition:width 0.4s;
-}
-.nav-links a:hover{color:var(--ice);}
-.nav-links a:hover::after{width:100%;}
-.nav-status{
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  letter-spacing:0.2em;color:var(--amber);
-  display:flex;align-items:center;gap:10px;
-}
-.status-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);animation:pulse 2.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
-
-/* HERO */
-#hero{
-  position:relative;height:100vh;min-height:700px;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  overflow:hidden;z-index:3;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background:
-    radial-gradient(ellipse 60% 50% at 30% 60%, rgba(20,35,50,0.8) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 60% at 80% 30%, rgba(10,20,30,0.6) 0%, transparent 60%),
-    linear-gradient(to bottom, rgba(6,7,8,0.2) 0%, rgba(6,7,8,0.7) 70%, rgba(6,7,8,1) 100%);
-  z-index:1;
-}
-.hero-landscape{
-  position:absolute;inset:0;
-  background:
-    /* Distant mountains */
-    radial-gradient(ellipse 200% 30% at 50% 85%, rgba(15,22,30,0.9) 0%, transparent 50%),
-    /* Mid fog layer */
-    radial-gradient(ellipse 150% 20% at 30% 70%, rgba(40,60,80,0.3) 0%, transparent 60%),
-    /* Sky atmosphere */
-    linear-gradient(180deg,
-      rgba(8,12,18,1) 0%,
-      rgba(12,18,28,0.95) 20%,
-      rgba(20,32,45,0.7) 40%,
-      rgba(30,45,55,0.5) 55%,
-      rgba(25,35,42,0.8) 70%,
-      rgba(10,14,18,0.95) 85%,
-      rgba(6,7,8,1) 100%
-    );
-}
-
-/* SVG Landscape */
-.hero-svg-landscape{
-  position:absolute;bottom:0;left:0;right:0;height:65%;
-  z-index:0;
-}
-
-.hero-content{
-  position:relative;z-index:10;
-  padding:0 60px 80px;
-  max-width:900px;
-}
-.hero-eyebrow{
-  font-family:'Share Tech Mono',monospace;
-  font-size:10px;letter-spacing:0.5em;
-  color:var(--cyan);text-transform:uppercase;
-  margin-bottom:32px;
-  display:flex;align-items:center;gap:16px;
-}
-.hero-eyebrow::before{content:'';display:block;width:40px;height:1px;background:var(--cyan);}
-.hero-h1{
-  font-family:'Rajdhani',sans-serif;
-  font-weight:300;
-  font-size:clamp(60px,8vw,120px);
-  line-height:0.9;
-  letter-spacing:-0.01em;
-  color:var(--white);
-  margin-bottom:8px;
-}
-.hero-h1 em{
-  font-style:normal;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(221,232,238,0.4);
-}
-.hero-sub{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(18px,2.5vw,26px);
-  color:var(--mist);
-  letter-spacing:0.05em;
-  margin-bottom:60px;
-  font-weight:300;
-}
-.hero-cta-row{display:flex;align-items:center;gap:40px;}
-.btn-primary{
-  position:relative;
-  font-family:'Rajdhani',sans-serif;
-  font-size:11px;letter-spacing:0.4em;
-  text-transform:uppercase;
-  color:var(--black);
-  background:var(--cyan);
-  border:none;
-  padding:16px 48px;
-  cursor:none;
-  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
-  transition:background 0.3s,color 0.3s;
-  text-decoration:none;display:inline-block;
-}
-.btn-primary:hover{background:var(--white);}
-.btn-outline{
-  font-family:'Rajdhani',sans-serif;
-  font-size:11px;letter-spacing:0.4em;text-transform:uppercase;
-  color:var(--mist);
-  background:transparent;
-  border:1px solid rgba(138,154,170,0.3);
-  padding:15px 40px;
-  cursor:none;
-  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
-  transition:all 0.4s;
-  text-decoration:none;display:inline-block;
-}
-.btn-outline:hover{color:var(--ice);border-color:var(--cyan);background:rgba(61,216,216,0.04);}
-
-.hero-scroll{
-  position:absolute;bottom:40px;right:60px;
-  display:flex;flex-direction:column;align-items:center;
-  gap:12px;z-index:10;
-}
-.scroll-label{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.4em;color:var(--mist);text-transform:uppercase;
-  writing-mode:vertical-rl;
-}
-.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,var(--mist),transparent);animation:scrollAnim 2s infinite;}
-@keyframes scrollAnim{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
-
-/* HUD OVERLAYS */
-.hud-tl{position:absolute;top:100px;left:60px;z-index:10;opacity:0.5;}
-.hud-tr{position:absolute;top:100px;right:60px;z-index:10;opacity:0.5;}
-.hud-text{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--cyan);line-height:2;}
-
-.corner-bracket{
-  width:30px;height:30px;position:absolute;
-  border-color:rgba(61,216,216,0.4);border-style:solid;
-}
-.cb-tl{top:0;left:0;border-width:1px 0 0 1px;}
-.cb-tr{top:0;right:0;border-width:1px 1px 0 0;}
-.cb-bl{bottom:0;left:0;border-width:0 0 1px 1px;}
-.cb-br{bottom:0;right:0;border-width:0 1px 1px 0;}
-
-/* SECTION SHARED */
-section{position:relative;z-index:3;}
-.section-label{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.5em;text-transform:uppercase;color:var(--cyan-dim);
-  margin-bottom:60px;display:flex;align-items:center;gap:20px;
-}
-.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(61,216,216,0.2),transparent);}
-
-/* STORY SECTION */
-#story{
-  padding:160px 60px;
-  background:linear-gradient(to bottom,var(--black),var(--deep),var(--black));
-}
-.story-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:120px;align-items:center;max-width:1200px;margin:0 auto;
-}
-.story-visual{position:relative;}
-.story-img-frame{
-  position:relative;width:100%;aspect-ratio:3/4;
-  overflow:hidden;
-}
-.story-landscape-svg{width:100%;height:100%;}
-.story-frame-deco{
-  position:absolute;inset:-12px;
-  border:1px solid rgba(61,216,216,0.12);
-  pointer-events:none;
-}
-.story-frame-deco::before{
-  content:'';position:absolute;top:-1px;left:-1px;
-  width:40px;height:40px;
-  border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);
-}
-.story-frame-deco::after{
-  content:'';position:absolute;bottom:-1px;right:-1px;
-  width:40px;height:40px;
-  border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);
-}
-.data-badge{
-  position:absolute;bottom:-30px;right:-30px;
-  background:var(--slate);border:1px solid rgba(61,216,216,0.2);
-  padding:20px 28px;
-}
-.data-badge .num{
-  font-family:'Rajdhani',sans-serif;font-size:42px;font-weight:300;
-  color:var(--white);line-height:1;
-}
-.data-badge .label{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.3em;color:var(--mist);text-transform:uppercase;margin-top:4px;
-}
-
-.story-text h2{
-  font-family:'Rajdhani',sans-serif;font-weight:300;
-  font-size:clamp(36px,4vw,58px);
-  line-height:1.05;color:var(--ice);
-  margin-bottom:32px;letter-spacing:-0.01em;
-}
-.story-text h2 strong{
-  font-weight:600;color:var(--white);
-  display:block;
-}
-.story-text p{
-  font-family:'Cormorant Garamond',serif;
-  font-size:17px;line-height:1.8;
-  color:var(--mist);font-weight:300;
-  margin-bottom:24px;
-}
-.story-stat-row{
-  display:flex;gap:48px;margin-top:60px;
-  padding-top:48px;
-  border-top:1px solid rgba(138,154,170,0.1);
-}
-.stat-item .n{
-  font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:300;
-  color:var(--white);line-height:1;
-}
-.stat-item .n span{font-size:20px;color:var(--cyan);}
-.stat-item .l{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.3em;color:var(--mist);text-transform:uppercase;margin-top:6px;
-}
-
-/* SHOWCASE */
-#showcase{
-  padding:120px 0;
-  overflow:hidden;
-}
-.showcase-header{padding:0 60px;margin-bottom:80px;}
-.showcase-header h2{
-  font-family:'Rajdhani',sans-serif;font-weight:300;
-  font-size:clamp(42px,6vw,80px);
-  color:var(--ice);line-height:1;letter-spacing:-0.02em;
-}
-.showcase-header h2 em{
-  font-style:normal;color:transparent;
-  -webkit-text-stroke:1px rgba(221,232,238,0.25);
-}
-.showcase-cards{
-  display:flex;gap:0;
-  overflow-x:auto;padding:0 60px 40px;
-  scrollbar-width:none;
-}
-.showcase-cards::-webkit-scrollbar{display:none;}
-.sc-card{
-  flex:0 0 420px;
-  position:relative;overflow:hidden;
-  cursor:none;
-  margin-right:2px;
-}
-.sc-card-inner{
-  height:560px;position:relative;overflow:hidden;
-  transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-.sc-card:hover .sc-card-inner{transform:scale(1.03);}
-.sc-bg{position:absolute;inset:0;}
-.sc-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(6,7,8,0.95) 0%,rgba(6,7,8,0.3) 50%,rgba(6,7,8,0.1) 100%);
-  transition:opacity 0.4s;
-}
-.sc-card:hover .sc-overlay{opacity:0.7;}
-.sc-content{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:32px;
-}
-.sc-num{
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  letter-spacing:0.4em;color:var(--cyan);margin-bottom:20px;
-}
-.sc-title{
-  font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:500;
-  color:var(--white);line-height:1.1;margin-bottom:12px;
-}
-.sc-desc{
-  font-size:13px;color:var(--mist);line-height:1.7;
-  font-family:'Cormorant Garamond',serif;font-weight:300;
-  max-height:0;overflow:hidden;
-  transition:max-height 0.5s,opacity 0.4s;opacity:0;
-}
-.sc-card:hover .sc-desc{max-height:80px;opacity:1;}
-.sc-arrow{
-  display:flex;align-items:center;gap:12px;
-  margin-top:20px;
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  letter-spacing:0.3em;color:var(--cyan);
-  transform:translateX(-10px);opacity:0;
-  transition:transform 0.4s,opacity 0.4s;
-}
-.sc-card:hover .sc-arrow{transform:translateX(0);opacity:1;}
-.sc-arrow::before{content:'';display:block;width:30px;height:1px;background:var(--cyan);}
-
-/* CTA SECTION */
-#cta{
-  padding:160px 60px;
-  position:relative;overflow:hidden;
-}
-.cta-bg-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(61,216,216,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(61,216,216,0.03) 1px,transparent 1px);
-  background-size:60px 60px;
-}
-.cta-center{
-  position:relative;max-width:900px;margin:0 auto;text-align:center;
-  z-index:1;
-}
-.cta-overline{
-  font-family:'Share Tech Mono',monospace;font-size:10px;
-  letter-spacing:0.5em;text-transform:uppercase;
-  color:var(--amber);margin-bottom:48px;
-  display:flex;align-items:center;justify-content:center;gap:20px;
-}
-.cta-overline::before,.cta-overline::after{content:'';display:block;width:60px;height:1px;background:var(--amber);opacity:0.5;}
-.cta-h2{
-  font-family:'Rajdhani',sans-serif;font-weight:300;
-  font-size:clamp(48px,7vw,100px);
-  line-height:0.95;letter-spacing:-0.02em;
-  color:var(--white);margin-bottom:40px;
-}
-.cta-h2 strong{
-  display:block;font-weight:600;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(221,232,238,0.6);
-}
-.cta-body{
-  font-family:'Cormorant Garamond',serif;
-  font-size:20px;color:var(--mist);
-  line-height:1.7;font-weight:300;font-style:italic;
-  max-width:560px;margin:0 auto 64px;
-}
-.cta-btns{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;}
-.cta-ring{
-  position:absolute;
-  border-radius:50%;border:1px solid rgba(61,216,216,0.06);
-  pointer-events:none;
-}
-.cta-ring:nth-child(1){width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);}
-.cta-ring:nth-child(2){width:900px;height:900px;top:50%;left:50%;transform:translate(-50%,-50%);animation:ringPulse 6s infinite;}
-.cta-ring:nth-child(3){width:1200px;height:1200px;top:50%;left:50%;transform:translate(-50%,-50%);animation:ringPulse 6s 2s infinite;}
-@keyframes ringPulse{0%,100%{border-color:rgba(61,216,216,0.06);}50%{border-color:rgba(61,216,216,0.12);}}
-
-/* WORLD STRIP */
-#world{padding:0 60px 120px;}
-.world-strip{
-  display:grid;grid-template-columns:repeat(5,1fr);
-  gap:1px;background:rgba(61,216,216,0.08);
-  border:1px solid rgba(61,216,216,0.08);
-}
-.world-item{
-  padding:40px 30px;background:var(--black);
-  transition:background 0.4s;cursor:none;
-  text-align:center;
-}
-.world-item:hover{background:var(--slate);}
-.world-icon{
-  width:40px;height:40px;margin:0 auto 20px;
-  border:1px solid rgba(61,216,216,0.2);
-  display:flex;align-items:center;justify-content:center;
-}
-.world-icon svg{width:20px;height:20px;stroke:var(--cyan);stroke-width:1.5;fill:none;}
-.world-item-title{
-  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:500;
-  letter-spacing:0.2em;text-transform:uppercase;color:var(--ice);
-  margin-bottom:8px;
-}
-.world-item-sub{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.15em;color:var(--mist);
-}
-
-/* FOOTER */
-footer{
-  position:relative;z-index:3;
-  padding:80px 60px 60px;
-  border-top:1px solid rgba(61,216,216,0.08);
-  background:var(--deep);
-}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:80px;margin-bottom:80px;}
-.footer-brand .logo{
-  font-family:'Share Tech Mono',monospace;font-size:14px;
-  letter-spacing:0.4em;color:var(--cyan);text-transform:uppercase;margin-bottom:20px;
-}
-.footer-brand p{
-  font-family:'Cormorant Garamond',serif;
-  font-size:15px;color:var(--mist);line-height:1.8;
-  font-weight:300;max-width:260px;
-}
-.footer-col h4{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.4em;text-transform:uppercase;
-  color:var(--cyan-dim);margin-bottom:24px;
-}
-.footer-col a{
-  display:block;
-  font-family:'Rajdhani',sans-serif;font-size:14px;
-  color:var(--mist);text-decoration:none;
-  margin-bottom:12px;transition:color 0.3s;
-  letter-spacing:0.05em;
-}
-.footer-col a:hover{color:var(--ice);}
-.footer-bottom{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-top:40px;border-top:1px solid rgba(61,216,216,0.06);
-}
-.footer-copy{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.3em;color:var(--mist);text-transform:uppercase;
-}
-.footer-coord{
-  font-family:'Share Tech Mono',monospace;font-size:9px;
-  letter-spacing:0.2em;color:var(--cyan-dim);
-}
-
-/* NOISE TEXTURE */
+/* ─── GRAIN NOISE ─── */
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  opacity:0.025;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.028;pointer-events:none;z-index:1000;
+  animation:grainShift 6s steps(8) infinite
+}
+@keyframes grainShift{
+  0%{background-position:0 0}12%{background-position:-5% -10%}25%{background-position:15% 5%}
+  37%{background-position:7% -25%}50%{background-position:-20% 25%}
+  62%{background-position:25% 10%}75%{background-position:-15% 5%}87%{background-position:0 15%}to{background-position:0 0}
 }
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);}
-.reveal.visible{opacity:1;transform:translateY(0);}
-
-/* GLITCH */
-@keyframes glitch{
-  0%,95%,100%{text-shadow:none;}
-  96%{text-shadow:-2px 0 var(--cyan),2px 0 var(--amber);}
-  97%{text-shadow:2px 0 var(--cyan),-2px 0 var(--amber);}
-  98%{text-shadow:-1px 0 var(--cyan);}
-  99%{text-shadow:none;}
+/* ─── SCANLINES ─── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.018) 3px,rgba(0,0,0,0.018) 4px);
+  pointer-events:none;z-index:999
 }
-.glitch{animation:glitch 8s infinite;}
 
-/* HOLOGRAM LINES */
-.holo-line{
-  position:absolute;left:0;right:0;height:1px;
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:linear-gradient(to bottom,var(--strand-warm),var(--strand-cold));border-radius:2px}
+
+/* ─── CURSOR ─── */
+.cursor{position:fixed;width:7px;height:7px;border-radius:50%;background:var(--strand-cold);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:opacity 0.3s}
+.cursor-ring{position:fixed;width:34px;height:34px;border-radius:50%;border:1px solid rgba(61,216,216,0.45);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width 0.35s cubic-bezier(0.23,1,0.32,1),height 0.35s cubic-bezier(0.23,1,0.32,1),border-color 0.3s;mix-blend-mode:screen}
+.cursor-trail{position:fixed;width:4px;height:4px;border-radius:50%;background:rgba(61,216,216,0.3);pointer-events:none;z-index:9997;transform:translate(-50%,-50%);transition:left 0.08s,top 0.08s;mix-blend-mode:screen}
+
+/* ─── CANVAS LAYERS ─── */
+#rain-canvas{position:fixed;inset:0;pointer-events:none;z-index:12;opacity:0.38}
+#strand-canvas{position:fixed;inset:0;pointer-events:none;z-index:11;opacity:0.55}
+#fog-canvas{position:fixed;inset:0;pointer-events:none;z-index:10;opacity:0.6}
+
+/* ─── HUD CORNERS ─── */
+.hud-corner{position:fixed;z-index:200;pointer-events:none;width:28px;height:28px}
+.hud-tl{top:14px;left:14px;border-top:1px solid rgba(61,216,216,0.25);border-left:1px solid rgba(61,216,216,0.25)}
+.hud-tr{top:14px;right:14px;border-top:1px solid rgba(61,216,216,0.25);border-right:1px solid rgba(61,216,216,0.25)}
+.hud-bl{bottom:14px;left:14px;border-bottom:1px solid rgba(61,216,216,0.25);border-left:1px solid rgba(61,216,216,0.25)}
+.hud-br{bottom:14px;right:14px;border-bottom:1px solid rgba(61,216,216,0.25);border-right:1px solid rgba(61,216,216,0.25)}
+
+/* ─── GLOBAL SECTION ─── */
+section{position:relative;z-index:20}
+
+/* ─── NAVIGATION ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:26px 64px;display:flex;align-items:center;justify-content:space-between;
+  transition:background 0.5s,backdrop-filter 0.5s
+}
+nav.scrolled{background:rgba(6,6,8,0.95);backdrop-filter:blur(24px);border-bottom:1px solid rgba(61,216,216,0.06)}
+nav::after{content:'';position:absolute;bottom:0;left:64px;right:64px;height:1px;background:linear-gradient(to right,transparent,rgba(61,216,216,0.08),transparent);pointer-events:none}
+.nav-logo-wrap{display:flex;flex-direction:column;gap:2px}
+.nav-logo{font-family:var(--ff-display);font-size:20px;letter-spacing:0.45em;color:var(--strand-cold);text-decoration:none;line-height:1}
+.nav-logo-sub{font-family:var(--ff-mono);font-size:7.5px;letter-spacing:0.35em;color:rgba(61,216,216,0.4);text-transform:uppercase}
+.nav-links{display:flex;gap:40px;list-style:none;align-items:center}
+.nav-links a{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.3em;color:rgba(184,200,212,0.5);text-decoration:none;text-transform:uppercase;transition:color 0.4s;position:relative}
+.nav-links a .nl-num{color:rgba(61,216,216,0.4);margin-right:6px;font-size:8px}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--strand-cold);transition:width 0.4s}
+.nav-links a:hover{color:var(--ice)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:28px}
+.nav-status{display:flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:9px;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.35;transform:scale(0.7)}}
+.nav-btn{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.35em;text-transform:uppercase;padding:11px 28px;border:1px solid rgba(61,216,216,0.3);color:var(--strand-cold);text-decoration:none;position:relative;overflow:hidden;transition:color 0.4s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.nav-btn::before{content:'';position:absolute;inset:0;background:var(--strand-cold);transform:translateX(-101%);transition:transform 0.45s cubic-bezier(0.23,1,0.32,1)}
+.nav-btn:hover::before{transform:translateX(0)}
+.nav-btn:hover{color:var(--void)}
+.nav-btn span{position:relative;z-index:1}
+
+/* ─── HERO ─── */
+#hero{
+  position:relative;height:100vh;min-height:760px;
+  display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden
+}
+.hero-bg-img{
+  position:absolute;inset:0;z-index:0;
+  background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=2000&q=90');
+  background-size:cover;background-position:center 35%;
+  filter:grayscale(35%) contrast(1.12) brightness(0.42) saturate(0.5);
+  transform:scale(1.06);animation:heroZoom 22s ease-in-out infinite alternate
+}
+@keyframes heroZoom{from{transform:scale(1.06)}to{transform:scale(1.13)}}
+.hero-fog-base{position:absolute;inset:0;z-index:2;
+  background:radial-gradient(ellipse 80% 70% at 25% 65%,rgba(6,8,12,0.88) 0%,transparent 80%),
+  radial-gradient(ellipse 50% 60% at 80% 25%,rgba(12,8,6,0.35) 0%,transparent 70%)}
+.hero-fog-bottom{position:absolute;bottom:0;left:0;right:0;height:65%;z-index:3;
+  background:linear-gradient(to top,var(--void) 18%,rgba(6,6,8,0.75) 48%,transparent 100%)}
+.hero-fog-top{position:absolute;top:0;left:0;right:0;height:38%;z-index:3;
+  background:linear-gradient(to bottom,rgba(6,6,8,0.65) 0%,transparent 100%)}
+.hero-vignette{position:absolute;inset:0;z-index:4;
+  background:radial-gradient(ellipse at center,transparent 25%,rgba(6,6,8,0.65) 100%)}
+.hero-holo-scan{position:absolute;left:0;right:0;height:1px;z-index:5;
   background:linear-gradient(to right,transparent,rgba(61,216,216,0.15),transparent);
-  animation:holoScan 4s linear infinite;
+  animation:holoScan 5s linear infinite}
+@keyframes holoScan{0%{top:0%;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.hero-horizon{position:absolute;bottom:0;left:0;right:0;height:1px;z-index:6;
+  background:linear-gradient(to right,transparent,rgba(200,184,154,0.1),rgba(61,216,216,0.08),transparent)}
+
+/* HUD READOUTS ON HERO */
+.hero-hud-tl{position:absolute;top:28%;right:64px;z-index:30;opacity:0.7;text-align:right}
+.hero-hud-tr{position:absolute;top:42%;right:64px;z-index:30;opacity:0.7;text-align:right}
+.hud-bracket{position:relative;padding:14px 16px;width:180px}
+.hud-bracket::before,.hud-bracket::after{content:'';position:absolute;width:20px;height:20px;border-color:rgba(61,216,216,0.3);border-style:solid}
+.hud-bracket::before{top:0;left:0;border-width:1px 0 0 1px}
+.hud-bracket::after{bottom:0;right:0;border-width:0 1px 1px 0}
+.hud-text{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.2em;color:var(--strand-cold);line-height:2.1;text-transform:uppercase}
+.hud-text.amber{color:var(--amber-glow)}
+.hud-text.warm{color:var(--strand-warm)}
+
+.hero-content{position:relative;z-index:25;padding:0 64px 88px;max-width:1000px}
+.hero-eyebrow{
+  font-family:var(--ff-mono);font-size:9.5px;letter-spacing:0.55em;color:var(--strand-cold);
+  text-transform:uppercase;margin-bottom:30px;
+  display:flex;align-items:center;gap:18px;
+  opacity:0;animation:fadeUp 1s 0.4s cubic-bezier(0.23,1,0.32,1) forwards
 }
-@keyframes holoScan{
-  0%{top:0%;opacity:0;}
-  10%{opacity:1;}
-  90%{opacity:1;}
-  100%{top:100%;opacity:0;}
+.hero-eyebrow::before{content:'';display:block;width:44px;height:1px;background:var(--strand-cold)}
+.hero-eyebrow .unit{color:rgba(61,216,216,0.4);margin-right:4px}
+.hero-title{
+  font-family:var(--ff-display);font-size:clamp(82px,11.5vw,190px);
+  line-height:0.87;letter-spacing:-0.005em;color:var(--ghost);
+  margin-bottom:10px;
+  opacity:0;animation:fadeUp 1.3s 0.65s cubic-bezier(0.23,1,0.32,1) forwards,glitch 9s 2.5s infinite
+}
+.hero-title-ghost{
+  display:block;color:transparent;
+  -webkit-text-stroke:1px rgba(221,232,238,0.32);
+  font-size:clamp(60px,8.5vw,138px);letter-spacing:0.04em;
+  margin-top:4px
+}
+.hero-sub{
+  font-family:var(--ff-body);font-style:italic;font-weight:300;
+  font-size:clamp(16px,1.9vw,22px);color:rgba(184,200,212,0.65);
+  line-height:1.75;margin-top:22px;margin-bottom:52px;max-width:560px;
+  opacity:0;animation:fadeUp 1s 0.95s cubic-bezier(0.23,1,0.32,1) forwards
+}
+.hero-cta-row{
+  display:flex;align-items:center;gap:36px;
+  opacity:0;animation:fadeUp 1s 1.15s cubic-bezier(0.23,1,0.32,1) forwards
+}
+.btn-primary{
+  position:relative;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.45em;
+  text-transform:uppercase;color:var(--void);background:var(--strand-cold);
+  padding:19px 56px;text-decoration:none;display:inline-block;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+  transition:background 0.35s,transform 0.25s;overflow:hidden
+}
+.btn-primary::before{content:'';position:absolute;inset:0;background:var(--ghost);transform:scaleX(0);transform-origin:left;transition:transform 0.45s cubic-bezier(0.23,1,0.32,1)}
+.btn-primary:hover::before{transform:scaleX(1)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-primary span{position:relative;z-index:1}
+.btn-ghost-link{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:0.4em;text-transform:uppercase;
+  color:rgba(184,200,212,0.5);text-decoration:none;display:flex;align-items:center;gap:14px;
+  transition:color 0.35s
+}
+.btn-ghost-link::before{content:'';display:block;width:32px;height:1px;background:currentColor;transition:width 0.4s}
+.btn-ghost-link:hover{color:var(--ice)}
+.btn-ghost-link:hover::before{width:54px}
+.hero-bottom-right{
+  position:absolute;bottom:88px;right:64px;z-index:25;text-align:right;
+  opacity:0;animation:fadeIn 1.2s 1.6s forwards
+}
+.hero-coords{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.25em;color:rgba(61,216,216,0.35);line-height:2}
+.hero-coords .bright{color:rgba(61,216,216,0.65)}
+.scroll-indicator{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:25;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  opacity:0;animation:fadeIn 1s 2s forwards
+}
+.scroll-indicator span{font-family:var(--ff-mono);font-size:8px;letter-spacing:0.45em;color:rgba(184,200,212,0.35);text-transform:uppercase}
+.scroll-line{width:1px;height:52px;background:linear-gradient(to bottom,rgba(61,216,216,0.4),transparent);animation:scrollPulse 2.2s ease-in-out infinite}
+@keyframes scrollPulse{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(42px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ─── METRICS BAND ─── */
+.metrics-band{
+  position:relative;z-index:30;
+  padding:0 64px;background:rgba(8,10,14,0.97);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(61,216,216,0.08);border-bottom:1px solid rgba(61,216,216,0.08);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  overflow:hidden
+}
+.metrics-band::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(61,216,216,0.03) 0%,transparent 50%,rgba(200,184,154,0.02) 100%)}
+.metric-item{
+  padding:32px 24px;display:flex;flex-direction:column;gap:6px;
+  border-right:1px solid rgba(61,216,216,0.07);position:relative;
+  transition:background 0.4s
+}
+.metric-item:last-child{border-right:none}
+.metric-item:hover{background:rgba(61,216,216,0.025)}
+.metric-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--strand-cold),transparent);transform:scaleX(0);transform-origin:left;transition:transform 0.5s cubic-bezier(0.23,1,0.32,1)}
+.metric-item:hover::before{transform:scaleX(1)}
+.metric-item:first-child{padding-left:24px}
+.metric-num{font-family:var(--ff-display);font-size:38px;color:var(--ghost);letter-spacing:0.02em;line-height:1}
+.metric-num .unit{font-family:var(--ff-mono);font-size:14px;color:var(--strand-cold);margin-left:2px}
+.metric-label{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.3em;color:rgba(138,154,170,0.5);text-transform:uppercase}
+
+/* ─── SECTION SHARED STYLES ─── */
+.s-label{
+  font-family:var(--ff-mono);font-size:9.5px;letter-spacing:0.5em;
+  text-transform:uppercase;color:var(--strand-cold-dim);
+  margin-bottom:64px;display:flex;align-items:center;gap:24px
+}
+.s-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(61,216,216,0.2),transparent)}
+.s-label .ch-num{color:rgba(61,216,216,0.35);margin-right:4px}
+
+/* ─── NARRATIVE / STORY ─── */
+#story{
+  padding:180px 64px;
+  background:linear-gradient(to bottom,var(--void),var(--deep) 50%,var(--void))
+}
+.story-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:96px;align-items:center;max-width:1320px;margin:0 auto}
+.story-visual{position:relative}
+.story-frame{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(61,216,216,0.12);aspect-ratio:16/10
+}
+.story-frame img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  filter:grayscale(45%) contrast(1.15) brightness(0.65) saturate(0.4);
+  transition:transform 0.9s cubic-bezier(0.23,1,0.32,1),filter 0.7s
+}
+.story-frame:hover img{transform:scale(1.06);filter:grayscale(20%) contrast(1.2) brightness(0.8) saturate(0.6)}
+.story-frame-deco{position:absolute;inset:-18px;border:1px solid rgba(61,216,216,0.07);pointer-events:none}
+.story-frame-deco::before{content:'';position:absolute;top:-1px;left:-1px;width:52px;height:52px;border-top:2px solid var(--strand-cold);border-left:2px solid var(--strand-cold)}
+.story-frame-deco::after{content:'';position:absolute;bottom:-1px;right:-1px;width:52px;height:52px;border-bottom:2px solid var(--strand-warm);border-right:2px solid var(--strand-warm)}
+.story-badge{
+  position:absolute;bottom:-28px;right:-28px;z-index:5;
+  background:var(--slate);border:1px solid rgba(61,216,216,0.2);
+  padding:22px 28px;min-width:160px
+}
+.story-badge .big{font-family:var(--ff-display);font-size:44px;color:var(--ghost);line-height:1}
+.story-badge .small{font-family:var(--ff-mono);font-size:8px;letter-spacing:0.3em;color:var(--mist);text-transform:uppercase;margin-top:5px}
+.story-badge .small span{color:var(--strand-cold)}
+.story-second-img{
+  position:absolute;top:-32px;left:-32px;width:45%;aspect-ratio:1;
+  overflow:hidden;border:1px solid rgba(200,184,154,0.15);z-index:6
+}
+.story-second-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(55%) brightness(0.6) contrast(1.1)}
+.story-second-img::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 50%,rgba(6,6,8,0.7) 100%)}
+.story-text{}
+.story-chapter{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.55em;color:var(--strand-cold);text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:16px}
+.story-chapter::after{content:'';flex:1;max-width:80px;height:1px;background:linear-gradient(to right,rgba(61,216,216,0.35),transparent)}
+.story-title{font-family:var(--ff-display);font-size:clamp(44px,5vw,72px);line-height:0.93;color:var(--ice);margin-bottom:10px;letter-spacing:0.01em}
+.story-title strong{display:block;color:var(--ghost);font-family:var(--ff-display)}
+.story-title-italic{font-family:var(--ff-body);font-style:italic;font-size:clamp(20px,2vw,28px);color:rgba(184,200,212,0.45);font-weight:300;letter-spacing:0.08em;display:block;margin-top:8px;margin-bottom:40px}
+.story-body{font-family:var(--ff-body);font-size:17px;line-height:1.9;color:rgba(184,200,212,0.6);font-weight:300;margin-bottom:28px}
+.story-body strong{color:var(--strand-warm);font-weight:400}
+.story-stats{display:flex;gap:52px;margin-top:56px;padding-top:44px;border-top:1px solid rgba(138,154,170,0.1)}
+.sstat .n{font-family:var(--ff-ui);font-size:38px;font-weight:300;color:var(--ghost);line-height:1}
+.sstat .n sup{font-size:18px;color:var(--strand-cold);vertical-align:top;margin-top:4px}
+.sstat .l{font-family:var(--ff-mono);font-size:8px;letter-spacing:0.3em;color:var(--mist);text-transform:uppercase;margin-top:8px}
+
+/* ─── TERRAIN DIVIDER ─── */
+.terrain-divider{position:relative;height:300px;overflow:hidden;z-index:20}
+.terrain-divider .td-img{
+  position:absolute;inset:-20%;width:calc(100% + 40%);left:-20%;
+  background-attachment:fixed;background-size:cover;background-position:center 60%;
+  filter:grayscale(65%) brightness(0.2) contrast(1.2);
+  will-change:transform
+}
+.terrain-divider::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,var(--void) 0%,transparent 25%,transparent 75%,var(--void) 100%);z-index:1}
+.terrain-divider::after{
+  content:attr(data-label);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:var(--ff-mono);font-size:9px;letter-spacing:0.7em;
+  color:rgba(61,216,216,0.2);text-transform:uppercase;z-index:2;white-space:nowrap
 }
 
-/* RESPONSIVE */
-@media(max-width:900px){
-  nav{padding:24px 30px;}
-  .nav-links{gap:24px;}
-  .hero-content{padding:0 30px 60px;}
-  #story{padding:100px 30px;}
-  .story-grid{grid-template-columns:1fr;gap:60px;}
-  .data-badge{right:0;bottom:-20px;}
-  #showcase .showcase-header,.showcase-cards{padding-left:30px;padding-right:30px;}
-  #cta{padding:120px 30px;}
-  .world-strip{grid-template-columns:repeat(2,1fr);}
-  footer{padding:60px 30px 40px;}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:40px;}
-  .hud-tl,.hud-tr{display:none;}
+/* ─── GEAR / CARGO SECTION ─── */
+#cargo{
+  padding:170px 64px;
+  background:var(--deep);border-top:1px solid rgba(61,216,216,0.05)
+}
+.cargo-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:100px;max-width:1320px;margin:0 auto;align-items:center}
+.cargo-text .story-title{font-size:clamp(38px,4.5vw,62px)}
+.cargo-frame{
+  position:relative;border:1px solid rgba(200,133,10,0.28);
+  overflow:hidden
+}
+.cargo-frame img{
+  width:100%;aspect-ratio:16/9;object-fit:cover;object-position:center;
+  filter:grayscale(45%) contrast(1.25) sepia(0.1) brightness(0.7) saturate(0.5);
+  transition:transform 0.9s cubic-bezier(0.23,1,0.32,1)
+}
+.cargo-frame:hover img{transform:scale(1.04)}
+.cargo-hud-overlay{
+  position:absolute;inset:0;border:1px solid rgba(61,216,216,0.1);
+  display:flex;flex-direction:column;justify-content:space-between;
+  padding:18px;pointer-events:none
+}
+.cargo-hud-overlay .chud{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.2em;color:var(--strand-cold);opacity:0.75}
+.cargo-hud-overlay .chud.right{text-align:right;color:var(--amber-glow)}
+.cargo-bar{margin-top:44px}
+.cargo-bar-item{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.cargo-bar-label{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.25em;color:var(--mist);text-transform:uppercase;min-width:140px}
+.cargo-bar-track{flex:1;height:2px;background:rgba(138,154,170,0.15);position:relative;overflow:hidden}
+.cargo-bar-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(to right,var(--strand-cold),var(--strand-warm));transform-origin:left;transform:scaleX(0);transition:transform 1.2s cubic-bezier(0.23,1,0.32,1)}
+.cargo-bar-val{font-family:var(--ff-mono);font-size:8.5px;color:var(--strand-cold);min-width:40px;text-align:right}
+
+/* ─── SHOWCASE / TERRAIN CARDS ─── */
+#showcase{padding:160px 0;background:var(--void);overflow:hidden}
+#showcase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(61,216,216,0.12),rgba(200,184,154,0.08),transparent)}
+.showcase-head{padding:0 64px;margin-bottom:88px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:32px}
+.showcase-head-left{}
+.showcase-main-title{font-family:var(--ff-display);font-size:clamp(50px,7vw,96px);color:var(--ice);line-height:0.9;letter-spacing:0.01em}
+.showcase-main-title em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(221,232,238,0.28)}
+.showcase-head-desc{max-width:360px;font-family:var(--ff-body);font-size:15px;line-height:1.8;color:rgba(138,154,170,0.65);font-weight:300;text-align:right}
+.showcase-track{
+  display:flex;gap:3px;overflow-x:auto;padding:0 64px 48px;
+  scrollbar-width:none;scroll-snap-type:x mandatory
+}
+.showcase-track::-webkit-scrollbar{display:none}
+.sc-card{
+  flex:0 0 400px;position:relative;overflow:hidden;
+  scroll-snap-align:start;cursor:none;
+  background:var(--slate);border:1px solid rgba(61,216,216,0.07)
+}
+.sc-card-img{
+  width:100%;height:560px;object-fit:cover;object-position:center;
+  filter:grayscale(55%) contrast(1.1) brightness(0.5) saturate(0.35);
+  transform:scale(1.02);
+  transition:filter 0.8s cubic-bezier(0.23,1,0.32,1),transform 0.8s cubic-bezier(0.23,1,0.32,1)
+}
+.sc-card:hover .sc-card-img{filter:grayscale(20%) contrast(1.15) brightness(0.72) saturate(0.6);transform:scale(1.07)}
+.sc-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,8,0.97) 0%,rgba(6,6,8,0.35) 55%,rgba(6,6,8,0.1) 100%)}
+.sc-card-top-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--strand-cold),var(--strand-warm),transparent);transform:scaleX(0);transform-origin:left;transition:transform 0.7s cubic-bezier(0.23,1,0.32,1)}
+.sc-card:hover .sc-card-top-line{transform:scaleX(1)}
+.sc-card-content{
+  position:absolute;bottom:0;left:0;right:0;padding:36px;
+  transform:translateY(6px);transition:transform 0.5s cubic-bezier(0.23,1,0.32,1)
+}
+.sc-card:hover .sc-card-content{transform:translateY(0)}
+.sc-num{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.4em;color:var(--strand-cold);margin-bottom:10px;display:block;opacity:0.75}
+.sc-title{font-family:var(--ff-display);font-size:28px;color:var(--ghost);letter-spacing:0.04em;margin-bottom:10px}
+.sc-body{
+  font-family:var(--ff-body);font-size:13.5px;color:rgba(138,154,170,0.7);line-height:1.7;
+  max-height:0;overflow:hidden;opacity:0;
+  transition:max-height 0.6s cubic-bezier(0.23,1,0.32,1),opacity 0.4s 0.1s
+}
+.sc-card:hover .sc-body{max-height:90px;opacity:1}
+.sc-cta{
+  display:flex;align-items:center;gap:12px;margin-top:20px;
+  font-family:var(--ff-mono);font-size:9px;letter-spacing:0.3em;color:var(--strand-cold);
+  transform:translateX(-12px);opacity:0;transition:transform 0.4s,opacity 0.4s
+}
+.sc-card:hover .sc-cta{transform:translateX(0);opacity:1}
+.sc-cta::before{content:'';display:block;width:28px;height:1px;background:var(--strand-cold)}
+
+/* ─── WORLD / NODE SYSTEM ─── */
+#world-system{
+  padding:170px 64px;
+  background:linear-gradient(to bottom,var(--void),var(--deep) 40%,var(--ash) 80%,var(--void))
+}
+.world-center{max-width:1000px;margin:0 auto;text-align:center}
+.world-eyebrow{
+  font-family:var(--ff-mono);font-size:9px;letter-spacing:0.6em;text-transform:uppercase;
+  color:var(--strand-cold);margin-bottom:48px;
+  display:flex;align-items:center;justify-content:center;gap:24px
+}
+.world-eyebrow::before,.world-eyebrow::after{content:'';flex:none;width:56px;height:1px;background:linear-gradient(to right,transparent,rgba(61,216,216,0.35))}
+.world-eyebrow::after{background:linear-gradient(to left,transparent,rgba(61,216,216,0.35))}
+.world-title{font-family:var(--ff-display);font-size:clamp(60px,9vw,128px);line-height:0.88;letter-spacing:0.01em;color:var(--ghost);margin-bottom:36px}
+.world-title .ghost-text{display:block;color:transparent;-webkit-text-stroke:1px rgba(221,232,238,0.22);letter-spacing:0.06em}
+.world-body{
+  font-family:var(--ff-body);font-size:19px;font-weight:300;font-style:italic;
+  line-height:1.85;color:rgba(184,200,212,0.5);margin-bottom:0;
+  max-width:680px;margin-left:auto;margin-right:auto
+}
+.world-node-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(61,216,216,0.06);border:1px solid rgba(61,216,216,0.08);
+  margin-top:80px;text-align:left
+}
+.world-node{
+  padding:46px 38px;background:rgba(6,6,8,0.85);position:relative;overflow:hidden;
+  transition:background 0.4s;cursor:none
+}
+.world-node:hover{background:rgba(12,14,18,0.95)}
+.world-node::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,var(--strand-cold),var(--strand-warm),transparent);transform:scaleX(0);transform-origin:left;transition:transform 0.6s cubic-bezier(0.23,1,0.32,1)}
+.world-node:hover::before{transform:scaleX(1)}
+.world-node::after{content:'';position:absolute;bottom:0;right:0;width:80px;height:80px;background:radial-gradient(circle at center,rgba(61,216,216,0.04) 0%,transparent 70%);opacity:0;transition:opacity 0.4s}
+.world-node:hover::after{opacity:1}
+.wn-icon{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.35em;color:var(--strand-cold);text-transform:uppercase;margin-bottom:20px;opacity:0.6}
+.wn-icon svg{display:inline-block;width:16px;height:16px;vertical-align:middle;margin-right:8px;stroke:var(--strand-cold);fill:none;stroke-width:1.5}
+.wn-title{font-family:var(--ff-display);font-size:24px;color:var(--ghost);letter-spacing:0.04em;margin-bottom:12px}
+.wn-body{font-family:var(--ff-body);font-size:14.5px;line-height:1.75;color:rgba(138,154,170,0.55);font-weight:300}
+
+/* ─── NETWORK / DATA PANEL ─── */
+#network{padding:140px 64px;background:var(--void);border-top:1px solid rgba(61,216,216,0.05)}
+.network-inner{max-width:1320px;margin:0 auto}
+.network-terminal{
+  border:1px solid rgba(61,216,216,0.14);background:rgba(6,8,12,0.9);
+  padding:56px;position:relative;overflow:hidden
+}
+.network-terminal::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(61,216,216,0.03) 0%,transparent 60%)}
+.nt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:44px;gap:32px;flex-wrap:wrap}
+.nt-title{font-family:var(--ff-display);font-size:clamp(36px,4.5vw,56px);color:var(--ice);line-height:0.95}
+.nt-title em{font-style:normal;color:transparent;-webkit-text-stroke:1px rgba(221,232,238,0.3)}
+.nt-meta{text-align:right}
+.nt-meta-line{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.25em;color:rgba(61,216,216,0.45);text-transform:uppercase;line-height:2.2}
+.nt-meta-line.active{color:var(--amber)}
+.network-vis{
+  width:100%;aspect-ratio:21/8;object-fit:cover;object-position:center;
+  filter:hue-rotate(150deg) brightness(0.32) contrast(1.4) saturate(1.5);
+  margin-top:4px;border:1px solid rgba(61,216,216,0.1)
+}
+.network-data-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border:1px solid rgba(61,216,216,0.08);margin-top:32px;
+  background:rgba(61,216,216,0.04)
+}
+.nd-cell{
+  padding:28px 32px;border-right:1px solid rgba(61,216,216,0.07);
+  background:rgba(6,6,8,0.8);transition:background 0.3s
+}
+.nd-cell:last-child{border-right:none}
+.nd-cell:hover{background:rgba(10,12,16,0.95)}
+.nd-val{font-family:var(--ff-ui);font-size:28px;font-weight:300;color:var(--ghost);line-height:1;margin-bottom:6px}
+.nd-val span{font-family:var(--ff-mono);font-size:12px;color:var(--strand-cold)}
+.nd-label{font-family:var(--ff-mono);font-size:8px;letter-spacing:0.3em;color:rgba(138,154,170,0.45);text-transform:uppercase}
+
+/* ─── WORLD STRIP ─── */
+#world-strip{padding:0 64px 140px;background:var(--void);z-index:30}
+.ws-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:rgba(61,216,216,0.08);border:1px solid rgba(61,216,216,0.08)
+}
+.ws-item{
+  padding:46px 28px;background:var(--void);transition:background 0.35s,transform 0.3s;
+  cursor:none;text-align:center;position:relative;overflow:hidden
+}
+.ws-item:hover{background:var(--slate);transform:translateY(-2px)}
+.ws-item::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--strand-cold);transform:scaleX(0);transition:transform 0.4s cubic-bezier(0.23,1,0.32,1)}
+.ws-item:hover::before{transform:scaleX(1)}
+.ws-icon{width:46px;height:46px;margin:0 auto 22px;border:1px solid rgba(61,216,216,0.2);display:flex;align-items:center;justify-content:center;transition:border-color 0.3s}
+.ws-item:hover .ws-icon{border-color:rgba(61,216,216,0.5)}
+.ws-icon svg{width:20px;height:20px;stroke:var(--strand-cold);fill:none;stroke-width:1.5}
+.ws-title{font-family:var(--ff-ui);font-size:13px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--ice);margin-bottom:10px}
+.ws-val{font-family:var(--ff-mono);font-size:9px;letter-spacing:0.18em;color:rgba(138,154,170,0.6)}
+
+/* ─── CTA ─── */
+#cta{
+  position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  overflow:hidden
+}
+.cta-bg-img{
+  position:absolute;inset:0;z-index:0;
+  background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=2000&q=90');
+  background-size:cover;background-position:center 70%;
+  filter:grayscale(30%) brightness(0.28) contrast(1.2) saturate(0.4);
+  transform:scale(1.04);animation:heroZoom 28s ease-in-out infinite alternate
+}
+.cta-bg-grid{position:absolute;inset:0;z-index:1;background-image:linear-gradient(rgba(61,216,216,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(61,216,216,0.015) 1px,transparent 1px);background-size:72px 72px}
+.cta-bg-overlay{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse at center,rgba(6,6,8,0.25) 0%,rgba(6,6,8,0.88) 70%)}
+.cta-bg-gradient{position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(6,6,8,0.75) 0%,transparent 25%,transparent 75%,rgba(6,6,8,0.95) 100%)}
+.cta-rings{position:absolute;inset:0;z-index:4;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.cta-ring{position:absolute;border-radius:50%;border:1px solid rgba(61,216,216,0.04)}
+.cta-ring:nth-child(1){width:500px;height:500px}
+.cta-ring:nth-child(2){width:800px;height:800px;animation:ringPulse 8s infinite}
+.cta-ring:nth-child(3){width:1200px;height:1200px;animation:ringPulse 8s 3s infinite}
+.cta-ring:nth-child(4){width:1800px;height:1800px;animation:ringPulse 8s 6s infinite}
+@keyframes ringPulse{0%,100%{border-color:rgba(61,216,216,0.03)}50%{border-color:rgba(61,216,216,0.09)}}
+.cta-content{position:relative;z-index:10;text-align:center;max-width:960px;padding:0 48px}
+.cta-overline{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:0.6em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:56px;
+  display:flex;align-items:center;justify-content:center;gap:24px
+}
+.cta-overline::before,.cta-overline::after{content:'';display:block;width:56px;height:1px;background:rgba(200,133,10,0.45)}
+.cta-title{font-family:var(--ff-display);font-size:clamp(58px,9.5vw,140px);line-height:0.87;letter-spacing:0.005em;color:var(--ghost);margin-bottom:36px}
+.cta-title .accent{color:var(--strand-cold)}
+.cta-title .outline{color:transparent;-webkit-text-stroke:1px rgba(221,232,238,0.45);display:block}
+.cta-body{
+  font-family:var(--ff-body);font-size:19px;font-weight:300;font-style:italic;
+  color:rgba(184,200,212,0.5);line-height:1.8;margin-bottom:68px;
+  max-width:580px;margin-left:auto;margin-right:auto
+}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap}
+.btn-cta-primary{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:0.5em;text-transform:uppercase;
+  padding:22px 68px;border:1px solid var(--strand-cold);color:var(--void);
+  background:var(--strand-cold);text-decoration:none;position:relative;overflow:hidden;
+  transition:box-shadow 0.4s,transform 0.25s;display:inline-block;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))
+}
+.btn-cta-primary::before{content:'';position:absolute;inset:0;background:var(--ghost);transform:scaleX(0);transform-origin:left;transition:transform 0.5s cubic-bezier(0.23,1,0.32,1)}
+.btn-cta-primary:hover::before{transform:scaleX(1)}
+.btn-cta-primary:hover{box-shadow:0 0 48px rgba(61,216,216,0.25);transform:translateY(-2px)}
+.btn-cta-primary span{position:relative;z-index:1}
+.btn-cta-outline{
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:0.5em;text-transform:uppercase;
+  padding:21px 68px;border:1px solid rgba(221,232,238,0.2);color:rgba(221,232,238,0.45);
+  text-decoration:none;display:inline-block;transition:all 0.4s;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))
+}
+.btn-cta-outline:hover{border-color:rgba(221,232,238,0.6);color:var(--ghost);background:rgba(221,232,238,0.04)}
+.cta-bottom-band{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  padding:18px 64px;border-top:1px solid rgba(61,216,216,0.07);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  background:rgba(6,6,8,0.6);backdrop-filter:blur(12px)
+}
+.cta-band-item{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.25em;color:rgba(61,216,216,0.28);text-transform:uppercase}
+.cta-band-item.live{color:rgba(200,133,10,0.55)}
+
+/* ─── FOOTER ─── */
+footer{
+  position:relative;z-index:30;
+  padding:96px 64px 52px;
+  background:var(--deep);
+  border-top:1px solid rgba(61,216,216,0.1)
+}
+footer::before{content:'';position:absolute;top:0;left:64px;right:64px;height:1px;background:linear-gradient(to right,transparent,rgba(61,216,216,0.18),rgba(200,184,154,0.1),transparent)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:72px;margin-bottom:84px}
+.footer-brand{}
+.footer-logo-wrap{display:flex;flex-direction:column;gap:4px;margin-bottom:28px}
+.footer-logo{font-family:var(--ff-display);font-size:28px;letter-spacing:0.35em;color:var(--strand-cold);text-decoration:none;line-height:1}
+.footer-logo-sub{font-family:var(--ff-mono);font-size:7px;letter-spacing:0.4em;color:rgba(61,216,216,0.35)}
+.footer-tagline{font-family:var(--ff-body);font-style:italic;font-size:14.5px;color:rgba(138,154,170,0.45);line-height:1.9;max-width:270px;font-weight:300}
+.footer-col-title{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--strand-cold-dim);margin-bottom:30px;opacity:0.9}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:14px}
+.footer-links a{
+  font-family:var(--ff-body);font-size:14px;color:rgba(138,154,170,0.5);
+  text-decoration:none;transition:color 0.3s;font-weight:300;
+  display:flex;align-items:center;gap:10px
+}
+.footer-links a::before{content:'';display:inline-block;width:14px;height:1px;background:rgba(61,216,216,0.25);transition:width 0.35s,background 0.35s}
+.footer-links a:hover{color:rgba(221,232,238,0.8)}
+.footer-links a:hover::before{width:22px;background:var(--strand-cold)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  padding-top:38px;border-top:1px solid rgba(61,216,216,0.06)
+}
+.footer-copy{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.28em;color:rgba(138,154,170,0.3);text-transform:uppercase}
+.footer-coord{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.22em;color:rgba(61,216,216,0.22);text-transform:uppercase}
+.footer-build{font-family:var(--ff-mono);font-size:8.5px;letter-spacing:0.22em;color:rgba(200,184,154,0.2);text-transform:uppercase}
+
+/* ─── GLITCH ANIMATION ─── */
+@keyframes glitch{
+  0%,92%,100%{text-shadow:none;transform:none}
+  93%{text-shadow:-2px 0 var(--strand-cold),2px 0 var(--amber);transform:translateX(-1px)}
+  95%{text-shadow:2px 0 var(--strand-cold),-2px 0 var(--amber);transform:translateX(2px)}
+  97%{text-shadow:-1px 0 var(--strand-cold);transform:translateX(-1px)}
+  99%{text-shadow:none;transform:none}
+}
+.glitch{animation:glitch 9s infinite}
+
+/* ─── REVEAL SYSTEM ─── */
+.reveal{opacity:0;transform:translateY(48px);transition:opacity 1s cubic-bezier(0.23,1,0.32,1),transform 1s cubic-bezier(0.23,1,0.32,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}
+.reveal-d2{transition-delay:0.22s}
+.reveal-d3{transition-delay:0.35s}
+.reveal-d4{transition-delay:0.5s}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 1s cubic-bezier(0.23,1,0.32,1),transform 1s cubic-bezier(0.23,1,0.32,1)}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity 1s cubic-bezier(0.23,1,0.32,1),transform 1s cubic-bezier(0.23,1,0.32,1)}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(0.94);transition:opacity 0.9s cubic-bezier(0.23,1,0.32,1),transform 0.9s cubic-bezier(0.23,1,0.32,1)}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){
+  nav{padding:20px 36px}
+  nav::after{left:36px;right:36px}
+  .nav-links{display:none}
+  .hero-content{padding:0 36px 72px}
+  .hero-hud-tl,.hero-hud-tr{display:none}
+  .hero-bottom-right{right:36px;bottom:72px}
+  #story{padding:120px 36px}
+  .story-grid{grid-template-columns:1fr;gap:72px}
+  .story-second-img{display:none}
+  .story-badge{right:0;bottom:-18px}
+  #cargo{padding:120px 36px}
+  .cargo-grid{grid-template-columns:1fr;gap:64px}
+  .showcase-head{padding:0 36px}
+  .showcase-track{padding:0 36px 40px}
+  #world-system{padding:120px 36px}
+  .world-node-grid{grid-template-columns:1fr}
+  #network{padding:110px 36px}
+  .network-terminal{padding:40px}
+  .network-data-row{grid-template-columns:repeat(2,1fr)}
+  #world-strip{padding:0 36px 110px}
+  .ws-grid{grid-template-columns:repeat(3,1fr)}
+  .cta-bottom-band{padding:16px 36px}
+  .metrics-band{padding:0 36px;grid-template-columns:repeat(3,1fr)}
+  .metric-item:nth-child(4),.metric-item:nth-child(5){display:none}
+  footer{padding:72px 36px 42px}
+  footer::before{left:36px;right:36px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:48px}
+}
+@media(max-width:680px){
+  .hero-title{font-size:clamp(68px,22vw,110px)}
+  .metrics-band{grid-template-columns:repeat(2,1fr);padding:0 24px}
+  .metric-item:nth-child(3){display:none}
+  .cta-title{font-size:clamp(52px,16vw,90px)}
+  .cta-btns{flex-direction:column;gap:14px}
+  .ws-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start;gap:8px}
+  .network-data-row{grid-template-columns:1fr}
+  .network-terminal{padding:28px 24px}
+  #story{padding:100px 24px}
+  #cargo{padding:100px 24px}
+  #world-system{padding:100px 24px}
+  #network{padding:90px 24px}
+  .showcase-head{padding:0 24px}
+  .showcase-track{padding:0 24px 36px}
+  #world-strip{padding:0 24px 90px}
 }
 </style>
 </head>
 <body>
 
+<!-- CURSORS -->
 <div class="cursor" id="cur"></div>
 <div class="cursor-ring" id="curRing"></div>
-<canvas id="rain"></canvas>
-<canvas id="strands"></canvas>
+<div class="cursor-trail" id="curTrail"></div>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">BRIDGES<span> / TYPE-IV</span></div>
-  <div class="nav-links">
-    <a href="#story">World</a>
-    <a href="#showcase">Systems</a>
-    <a href="#cta">Connect</a>
+<!-- CANVAS LAYERS -->
+<canvas id="fog-canvas"></canvas>
+<canvas id="strand-canvas"></canvas>
+<canvas id="rain-canvas"></canvas>
+
+<!-- HUD FRAME CORNERS -->
+<div class="hud-corner hud-tl"></div>
+<div class="hud-corner hud-tr"></div>
+<div class="hud-corner hud-bl"></div>
+<div class="hud-corner hud-br"></div>
+
+<!-- NAVIGATION -->
+<nav id="nav">
+  <div class="nav-logo-wrap">
+    <a href="#" class="nav-logo">BRIDGES</a>
+    <span class="nav-logo-sub">// KOJIMA PRODUCTIONS // UNIT DS-001</span>
   </div>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    CHIRAL LINK ACTIVE
+  <ul class="nav-links">
+    <li><a href="#story"><span class="nl-num">01</span>Archive</a></li>
+    <li><a href="#cargo"><span class="nl-num">02</span>Cargo</a></li>
+    <li><a href="#showcase"><span class="nl-num">03</span>Terrain</a></li>
+    <li><a href="#world-system"><span class="nl-num">04</span>Strand</a></li>
+    <li><a href="#network"><span class="nl-num">05</span>Network</a></li>
+    <li><a href="#cta"><span class="nl-num">06</span>Connect</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status"><div class="status-dot"></div>Q-PID LOCKED</div>
+    <a href="#cta" class="nav-btn"><span>Begin Journey</span></a>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
 <section id="hero">
-  <div class="hero-landscape"></div>
-  <div class="hero-bg"></div>
+  <div class="hero-bg-img"></div>
+  <div class="hero-fog-base"></div>
+  <div class="hero-fog-bottom"></div>
+  <div class="hero-fog-top"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-holo-scan"></div>
+  <div class="hero-horizon"></div>
 
-  <!-- SVG Cinematic Landscape -->
-  <svg class="hero-svg-landscape" viewBox="0 0 1440 500" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#060708" stop-opacity="1"/>
-        <stop offset="60%" stop-color="#0d1820" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="1"/>
-      </linearGradient>
-      <linearGradient id="mountain1G" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#101820" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="1"/>
-      </linearGradient>
-      <linearGradient id="mountain2G" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#0c1218" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="1"/>
-      </linearGradient>
-      <linearGradient id="groundG" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#1a2830" stop-opacity="0.6"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="1"/>
-      </linearGradient>
-      <linearGradient id="fogG" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#060708" stop-opacity="1"/>
-        <stop offset="20%" stop-color="#060708" stop-opacity="0"/>
-        <stop offset="80%" stop-color="#060708" stop-opacity="0"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="1"/>
-      </linearGradient>
-      <radialGradient id="glowG" cx="50%" cy="60%" r="40%">
-        <stop offset="0%" stop-color="#1a3a50" stop-opacity="0.4"/>
-        <stop offset="100%" stop-color="#060708" stop-opacity="0"/>
-      </radialGradient>
-      <filter id="blur1"><feGaussianBlur stdDeviation="3"/></filter>
-      <filter id="blur2"><feGaussianBlur stdDeviation="8"/></filter>
-    </defs>
-
-    <!-- Atmospheric glow -->
-    <ellipse cx="720" cy="300" rx="500" ry="200" fill="url(#glowG)"/>
-
-    <!-- Far mountains layer 3 (most distant, blurry) -->
-    <g filter="url(#blur2)" opacity="0.5">
-      <path d="M0 400 L120 280 L200 340 L320 240 L420 300 L520 200 L600 260 L700 180 L800 240 L900 190 L1000 250 L1100 170 L1200 230 L1320 200 L1440 280 L1440 500 L0 500Z" fill="#0a1018"/>
-    </g>
-
-    <!-- Mid mountains layer 2 -->
-    <g filter="url(#blur1)" opacity="0.8">
-      <path d="M0 450 L80 360 L160 400 L260 310 L380 370 L460 290 L560 350 L660 270 L760 320 L860 260 L960 310 L1060 240 L1160 300 L1280 260 L1360 310 L1440 370 L1440 500 L0 500Z" fill="url(#mountain1G)"/>
-    </g>
-
-    <!-- Foreground mountains layer 1 -->
-    <path d="M0 480 L60 430 L140 460 L220 400 L340 440 L440 380 L540 420 L640 360 L740 400 L840 350 L940 390 L1060 340 L1160 380 L1280 360 L1380 400 L1440 420 L1440 500 L0 500Z" fill="url(#mountain2G)"/>
-
-    <!-- Ground / foreground -->
-    <path d="M0 490 Q360 470 720 480 Q1080 490 1440 475 L1440 500 L0 500Z" fill="url(#groundG)"/>
-
-    <!-- Holographic grid lines on ground -->
-    <g opacity="0.1" stroke="#3dd8d8" stroke-width="0.5" fill="none">
-      <line x1="0" y1="495" x2="1440" y2="495"/>
-      <line x1="0" y1="485" x2="1440" y2="485"/>
-    </g>
-
-    <!-- Distant structure / tower silhouette -->
-    <g opacity="0.3">
-      <rect x="690" y="300" width="3" height="100" fill="#3dd8d8"/>
-      <rect x="685" y="295" width="13" height="4" fill="#3dd8d8"/>
-      <rect x="688" y="300" width="1" height="80" fill="#3dd8d8" opacity="0.5"/>
-    </g>
-
-    <!-- Fog overlay -->
-    <rect x="0" y="380" width="1440" height="120" fill="url(#fogG)" opacity="0.7"/>
-
-    <!-- Subtle cyan horizon glow -->
-    <ellipse cx="720" cy="380" rx="300" ry="8" fill="#3dd8d8" opacity="0.04"/>
-
-    <!-- BT-like floating silhouette left -->
-    <g opacity="0.15" transform="translate(200,320)">
-      <ellipse cx="0" cy="0" rx="18" ry="25" fill="#3dd8d8"/>
-      <ellipse cx="0" cy="-30" rx="10" ry="14" fill="#3dd8d8" opacity="0.7"/>
-    </g>
-    <!-- BT silhouette right -->
-    <g opacity="0.1" transform="translate(1100,340)">
-      <ellipse cx="0" cy="0" rx="14" ry="20" fill="#3dd8d8"/>
-      <ellipse cx="0" cy="-24" rx="8" ry="11" fill="#3dd8d8" opacity="0.7"/>
-    </g>
-
-    <!-- Chiral crystals scattered -->
-    <g opacity="0.2" fill="#3dd8d8">
-      <polygon points="350,460 355,440 360,460"/>
-      <polygon points="800,455 806,432 812,455"/>
-      <polygon points="1050,462 1054,445 1058,462"/>
-    </g>
-  </svg>
-
-  <!-- HUD overlays -->
-  <div class="hud-tl">
-    <div style="position:relative;width:120px;height:80px;">
-      <div class="corner-bracket cb-tl"></div>
-      <div class="corner-bracket cb-tr"></div>
-      <div class="corner-bracket cb-bl"></div>
-      <div class="corner-bracket cb-br"></div>
-      <div style="padding:14px 12px;">
-        <div class="hud-text">ALT: 1,847m</div>
-        <div class="hud-text">TEMP: -12°C</div>
-        <div class="hud-text">CHIRAL: 94%</div>
-      </div>
+  <!-- TOP-LEFT HUD -->
+  <div class="hero-hud-tl">
+    <div class="hud-bracket">
+      <div class="hud-text">ELEVATION: 2,419m</div>
+      <div class="hud-text amber">TIMEFALL PRECIP: 98.3%</div>
+      <div class="hud-text warm">CARGO: STABLE</div>
+      <div class="hud-text">BB SYNC: ALIGNED</div>
     </div>
   </div>
-  <div class="hud-tr">
-    <div class="hud-text" style="text-align:right;">64°08'N · 21°56'W</div>
-    <div class="hud-text" style="text-align:right;">TIMEFALL RISK: HIGH</div>
-    <div class="hud-text" style="text-align:right;color:var(--amber);">⬡ BT PROXIMITY</div>
+
+  <!-- TOP-RIGHT HUD -->
+  <div class="hero-hud-tr">
+    <div class="hud-text" style="text-align:right">64°11'S · 21°42'W</div>
+    <div class="hud-text amber" style="text-align:right">CHIRAL NETWORK TERMINAL LOCK</div>
+    <div class="hud-text" style="text-align:right;color:var(--strand-cold)">⬡ DOOMS: LEVEL V DETECTED</div>
+    <div class="hud-text" style="text-align:right;opacity:0.5">ANTIMATTER CORE: STABLE</div>
   </div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">BRIDGES INITIATIVE — PHASE IV</div>
-    <h1 class="hero-h1 glitch">RECONNECT<br><em>THE WORLD</em></h1>
-    <p class="hero-sub">Across the broken land, one strand at a time.</p>
+    <div class="hero-eyebrow"><span class="unit">// UNIT DS-001 //</span>Reconnect Protocol Active — Sequence 7</div>
+    <h1 class="hero-title">
+      DEATH<br>
+      <span class="hero-title-ghost">STRANDING</span>
+    </h1>
+    <p class="hero-sub">Every step across broken terrain is a thread that binds the living. Every delivery, a bond against extinction. The separation of yesterday becomes the network of tomorrow — if you carry what others cannot.</p>
     <div class="hero-cta-row">
-      <a href="#cta" class="btn-primary">BEGIN MISSION</a>
-      <a href="#story" class="btn-outline">EXPLORE WORLD</a>
+      <a href="#cta" class="btn-primary"><span>Access Chiral Network</span></a>
+      <a href="#story" class="btn-ghost-link">View Cinematic Archive</a>
     </div>
   </div>
 
-  <div class="hero-scroll">
-    <div class="scroll-label">SCROLL</div>
+  <div class="hero-bottom-right">
+    <div class="hero-coords">
+      <div>BRIDGES STATUS <span class="bright">// OPERATIONAL</span></div>
+      <div>STRAND NODES <span class="bright">// 1,409,211 ACTIVE</span></div>
+      <div>TIMEFALL <span class="bright">// ONGOING</span></div>
+      <div>VOIDOUT RISK <span class="bright">// 0.004%</span></div>
+    </div>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>Descend</span>
     <div class="scroll-line"></div>
   </div>
-
-  <div class="holo-line" style="animation-duration:5s;"></div>
 </section>
 
-<!-- STORY -->
+<!-- ═══════════════════════════════════════ METRICS BAND ═══════════════════════════════════════ -->
+<div class="metrics-band reveal">
+  <div class="metric-item">
+    <span class="metric-num" data-count="48291">0</span>
+    <span class="metric-label">Deliveries Complete</span>
+  </div>
+  <div class="metric-item">
+    <span class="metric-num" data-count="1409211">0<span class="unit">+</span></span>
+    <span class="metric-label">Strand Links Active</span>
+  </div>
+  <div class="metric-item">
+    <span class="metric-num" data-count="912">0</span>
+    <span class="metric-label">Chiral Nodes Established</span>
+  </div>
+  <div class="metric-item">
+    <span class="metric-num" data-count="23">0<span class="unit">K</span></span>
+    <span class="metric-label">Porters Connected</span>
+  </div>
+  <div class="metric-item">
+    <span class="metric-num" data-count="7">0</span>
+    <span class="metric-label">Regions Reconnected</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ STORY ═══════════════════════════════════════ -->
 <section id="story">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div class="section-label reveal">01 — WORLD NARRATIVE</div>
+  <div style="max-width:1320px;margin:0 auto">
+    <div class="s-label reveal"><span class="ch-num">01 —</span>Unified Core Logs // Cinematic Archive</div>
     <div class="story-grid">
-      <div class="story-visual reveal">
-        <div class="story-img-frame">
-          <!-- Cinematic portrait landscape SVG -->
-          <svg class="story-landscape-svg" viewBox="0 0 400 530" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="pSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#08101c"/>
-                <stop offset="40%" stop-color="#0d1e2c"/>
-                <stop offset="70%" stop-color="#152230"/>
-                <stop offset="100%" stop-color="#060708"/>
-              </linearGradient>
-              <linearGradient id="pGround" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#1c2c38" stop-opacity="0.8"/>
-                <stop offset="100%" stop-color="#060a0e" stop-opacity="1"/>
-              </linearGradient>
-              <linearGradient id="pFog" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#3dd8d8" stop-opacity="0"/>
-                <stop offset="50%" stop-color="#1a6b6b" stop-opacity="0.08"/>
-                <stop offset="100%" stop-color="#3dd8d8" stop-opacity="0"/>
-              </linearGradient>
-              <radialGradient id="pGlow" cx="50%" cy="55%" r="35%">
-                <stop offset="0%" stop-color="#3dd8d8" stop-opacity="0.06"/>
-                <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
-              </radialGradient>
-              <filter id="pBlur"><feGaussianBlur stdDeviation="4"/></filter>
-            </defs>
-
-            <!-- Sky -->
-            <rect width="400" height="530" fill="url(#pSky)"/>
-
-            <!-- Stars -->
-            <g fill="#dde8ee" opacity="0.6">
-              <circle cx="50" cy="40" r="0.8"/><circle cx="120" cy="25" r="0.6"/>
-              <circle cx="200" cy="15" r="1"/><circle cx="290" cy="35" r="0.7"/>
-              <circle cx="350" cy="20" r="0.8"/><circle cx="80" cy="70" r="0.5"/>
-              <circle cx="170" cy="55" r="0.6"/><circle cx="320" cy="60" r="0.9"/>
-              <circle cx="30" cy="100" r="0.5"/><circle cx="380" cy="80" r="0.6"/>
-            </g>
-
-            <!-- Atmospheric glow -->
-            <rect width="400" height="530" fill="url(#pGlow)"/>
-
-            <!-- Far mountains blurred -->
-            <g filter="url(#pBlur)" opacity="0.6">
-              <path d="M0 350 L60 270 L110 310 L170 240 L230 290 L290 220 L350 260 L400 280 L400 530 L0 530Z" fill="#0e1c28"/>
-            </g>
-
-            <!-- Mid mountains -->
-            <path d="M0 390 L40 340 L90 370 L150 310 L210 350 L270 290 L320 330 L370 300 L400 320 L400 530 L0 530Z" fill="#0a141e"/>
-
-            <!-- Foreground terrain -->
-            <path d="M0 440 Q100 420 200 430 Q300 440 400 425 L400 530 L0 530Z" fill="url(#pGround)"/>
-
-            <!-- Ground detail lines -->
-            <g stroke="#1a3040" stroke-width="0.5" fill="none" opacity="0.6">
-              <path d="M20 450 Q100 445 200 448 Q300 451 380 446"/>
-              <path d="M0 465 Q100 460 200 462 Q300 464 400 458"/>
-            </g>
-
-            <!-- Figure silhouette (Porter / Sam) -->
-            <g transform="translate(160,330)" opacity="0.85">
-              <!-- Body -->
-              <rect x="-8" y="0" width="16" height="40" rx="3" fill="#060c14"/>
-              <!-- Cargo on back -->
-              <rect x="-14" y="-10" width="10" height="35" rx="2" fill="#0a1018"/>
-              <rect x="-14" y="-10" width="10" height="8" rx="1" fill="#3dd8d8" opacity="0.15"/>
-              <!-- Head -->
-              <ellipse cx="0" cy="-14" rx="8" ry="9" fill="#0a141e"/>
-              <!-- Legs -->
-              <rect x="-6" y="38" width="5" height="22" rx="2" fill="#080e18"/>
-              <rect x="1" y="38" width="5" height="22" rx="2" fill="#080e18"/>
-              <!-- Boots -->
-              <rect x="-8" y="58" width="7" height="5" rx="1" fill="#060c14"/>
-              <rect x="0" y="58" width="7" height="5" rx="1" fill="#060c14"/>
-              <!-- Equipment glow -->
-              <circle cx="6" cy="5" r="3" fill="#3dd8d8" opacity="0.5"/>
-              <circle cx="6" cy="5" r="6" fill="#3dd8d8" opacity="0.08"/>
-              <!-- Walking stick / strand -->
-              <line x1="12" y1="5" x2="22" y2="60" stroke="#3dd8d8" stroke-width="0.8" opacity="0.3"/>
-            </g>
-
-            <!-- Strand lines from figure -->
-            <g stroke="#3dd8d8" stroke-width="0.5" fill="none" opacity="0.12">
-              <path d="M170 360 Q100 380 50 410"/>
-              <path d="M170 360 Q200 390 250 420"/>
-              <path d="M170 360 Q170 400 160 450"/>
-            </g>
-
-            <!-- Fog layer -->
-            <rect x="0" y="380" width="400" height="80" fill="url(#pFog)"/>
-
-            <!-- BT hand reaching up from mist -->
-            <g opacity="0.12" transform="translate(60,410)">
-              <path d="M0 50 C5 30 8 20 12 0 C14 10 15 25 14 50" fill="#3dd8d8"/>
-              <path d="M8 15 C2 10 -2 5 5 0" fill="none" stroke="#3dd8d8" stroke-width="2"/>
-              <path d="M12 10 C16 5 20 2 15 -3" fill="none" stroke="#3dd8d8" stroke-width="2"/>
-              <path d="M10 20 C4 18 0 18 2 12" fill="none" stroke="#3dd8d8" stroke-width="1.5"/>
-            </g>
-
-            <!-- Timefall rain streaks -->
-            <g stroke="#8aa0b0" stroke-width="0.3" opacity="0.2">
-              <line x1="30" y1="0" x2="20" y2="200"/>
-              <line x1="80" y1="20" x2="70" y2="180"/>
-              <line x1="150" y1="0" x2="140" y2="160"/>
-              <line x1="250" y1="10" x2="240" y2="220"/>
-              <line x1="320" y1="0" x2="310" y2="190"/>
-              <line x1="370" y1="30" x2="360" y2="200"/>
-            </g>
-
-            <!-- Holographic HUD elements -->
-            <g fill="none" stroke="#3dd8d8" stroke-width="0.5" opacity="0.3">
-              <rect x="10" y="10" width="50" height="30" rx="1"/>
-              <text x="35" y="22" text-anchor="middle" fill="#3dd8d8" font-size="6" font-family="monospace" opacity="0.8">CARGO</text>
-              <text x="35" y="32" text-anchor="middle" fill="#3dd8d8" font-size="5" font-family="monospace" opacity="0.6">342 KG</text>
-            </g>
-            <g fill="none" stroke="#c8850a" stroke-width="0.5" opacity="0.3">
-              <rect x="340" y="10" width="50" height="30" rx="1"/>
-              <text x="365" y="22" text-anchor="middle" fill="#c8850a" font-size="6" font-family="monospace" opacity="0.8">ODRADEK</text>
-              <text x="365" y="32" text-anchor="middle" fill="#c8850a" font-size="5" font-family="monospace" opacity="0.6">SCANNING</text>
-            </g>
-
-            <!-- Scanline overlay -->
-            <rect width="400" height="530" fill="none" stroke="#3dd8d8" stroke-width="0" opacity="0.03">
-              <animate attributeName="opacity" values="0;0.05;0" dur="3s" repeatCount="indefinite"/>
-            </rect>
-          </svg>
+      <div class="story-visual reveal-left">
+        <div class="story-second-img">
+          <img src="https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=400&q=80" alt="Timefall rain over the landscape">
+        </div>
+        <div class="story-frame">
+          <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=85" alt="The broken world Sam Porter Bridges must traverse">
           <div class="story-frame-deco"></div>
         </div>
-        <div class="data-badge">
-          <div class="num">847<span>+</span></div>
-          <div class="label">CITIES RECONNECTED</div>
+        <div class="story-badge">
+          <div class="big">01/07</div>
+          <div class="small"><span>REGION</span> // RECONNECTED</div>
         </div>
       </div>
-
-      <div class="story-text reveal" style="transition-delay:0.2s;">
-        <div class="section-label" style="margin-bottom:32px;">THE COLLAPSE</div>
-        <h2>
-          After the <strong>Death Stranding</strong>
-          every connection was severed
+      <div class="story-text reveal-right reveal-d2">
+        <div class="story-chapter">Chapter / 01 — Origin</div>
+        <h2 class="story-title">
+          <strong>THE DEATH</strong>
+          Stranding
+          <span class="story-title-italic">— a world in fragments —</span>
         </h2>
-        <p>The Death Stranding fractured the world, dissolving the bonds between people, places, and time itself. Beached Things roam the voidout zones, and timefall accelerates the decay of all it touches.</p>
-        <p>You are a porter. A carrier of cargo. A keeper of the last human connections. Across volcanic tundra and rain-soaked mountain passes, you carry what remains of civilization on your back.</p>
-        <div class="story-stat-row">
-          <div class="stat-item">
-            <div class="n">31<span>%</span></div>
-            <div class="l">Land Coverage</div>
+        <p class="story-body">A catastrophic supernatural event blurred the boundary between the living and the dead. Cities dissolved into silence. Roads became memories. Rain known as Timefall accelerated aging — <strong>reducing everything it touched to dust in moments.</strong></p>
+        <p class="story-body">What remains are those who refused to let go. Carriers. Porters. Sam Porter Bridges — one man who walks into the silence carrying the weight of a fractured world that cannot carry itself.</p>
+        <div class="story-stats">
+          <div class="sstat">
+            <div class="n">4.6<sup>M</sup></div>
+            <div class="l">Distance Traversed (km)</div>
           </div>
-          <div class="stat-item">
-            <div class="n">∞<span></span></div>
-            <div class="l">Chiral Distance</div>
+          <div class="sstat">
+            <div class="n">812<sup>KG</sup></div>
+            <div class="l">Critical Cargo Delivered</div>
           </div>
-          <div class="stat-item">
-            <div class="n">01<span>.</span></div>
-            <div class="l">Hope Remaining</div>
+          <div class="sstat">
+            <div class="n">99<sup>%</sup></div>
+            <div class="l">Cargo Integrity Rating</div>
           </div>
         </div>
       </div>
@@ -863,469 +817,634 @@ body::before{
   </div>
 </section>
 
-<!-- SHOWCASE -->
+<!-- TERRAIN DIVIDER 1 -->
+<div class="terrain-divider reveal-scale" data-label="// TIMEFALL ZONE — PROCEED WITH CAUTION //">
+  <div class="td-img" style="background-image:url('https://images.unsplash.com/photo-1504700610630-ac6aba3536d3?w=1920&q=80')"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ CARGO ═══════════════════════════════════════ -->
+<section id="cargo">
+  <div class="cargo-grid">
+    <div class="cargo-text reveal-left">
+      <div class="s-label"><span class="ch-num">02 —</span>Logistical Array // Load Systems</div>
+      <h2 class="story-title">
+        <strong>PORTER SYSTEMS</strong>
+        Equipment
+        <span class="story-title-italic">— optimized for survival —</span>
+      </h2>
+      <p class="story-body">Every journey demands calculated load distribution. The Active Skeleton exoskeleton transfers physical stress across kinetic dampeners — allowing Sam to cross rocky, rain-swept terrain with severe payloads without buckling under the crushing weight of civilization's last hope.</p>
+      <p class="story-body">The system dynamically analyzes cargo stack height to maintain <strong>optimal kinetic balance boundaries</strong>, even during violent Timefall storms, BT encounters, and MULE ambushes.</p>
+      <div class="cargo-bar" id="cargo-bars">
+        <div class="cargo-bar-item">
+          <span class="cargo-bar-label">Load Dampening</span>
+          <div class="cargo-bar-track"><div class="cargo-bar-fill" data-width="0.96"></div></div>
+          <span class="cargo-bar-val">96%</span>
+        </div>
+        <div class="cargo-bar-item">
+          <span class="cargo-bar-label">Skeleton Output</span>
+          <div class="cargo-bar-track"><div class="cargo-bar-fill" data-width="0.88"></div></div>
+          <span class="cargo-bar-val">88%</span>
+        </div>
+        <div class="cargo-bar-item">
+          <span class="cargo-bar-label">Boot Durability</span>
+          <div class="cargo-bar-track"><div class="cargo-bar-fill" data-width="0.74"></div></div>
+          <span class="cargo-bar-val">74%</span>
+        </div>
+        <div class="cargo-bar-item">
+          <span class="cargo-bar-label">Cargo Integrity</span>
+          <div class="cargo-bar-track"><div class="cargo-bar-fill" data-width="0.9989"></div></div>
+          <span class="cargo-bar-val">99.9%</span>
+        </div>
+        <div class="cargo-bar-item">
+          <span class="cargo-bar-label">Chiral Shield</span>
+          <div class="cargo-bar-track"><div class="cargo-bar-fill" data-width="0.67"></div></div>
+          <span class="cargo-bar-val">67%</span>
+        </div>
+      </div>
+    </div>
+    <div class="cargo-frame reveal-right reveal-d1">
+      <img src="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1200&q=85" alt="Traversing mountain terrain with cargo">
+      <div class="cargo-hud-overlay">
+        <div class="chud">[LOAD SELECTION: POWER ACTIVE SKELETON // TYPE IV]</div>
+        <div class="chud right">STABILITY RATING: OPTIMAL // 120%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERRAIN DIVIDER 2 -->
+<div class="terrain-divider reveal-scale" data-label="// HIGHLAND CROSSING — CARGO SECURED //">
+  <div class="td-img" style="background-image:url('https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=80')"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ SHOWCASE ═══════════════════════════════════════ -->
 <section id="showcase">
-  <div class="showcase-header reveal">
-    <div class="section-label">02 — DELIVERY SYSTEMS</div>
-    <h2>Tools of<br><em>Survival</em></h2>
+  <div class="showcase-head reveal">
+    <div class="showcase-head-left">
+      <div class="s-label"><span class="ch-num">03 —</span>Terrain Classification</div>
+      <h2 class="showcase-main-title">THE<br>CROSSING<em> ZONES</em></h2>
+    </div>
+    <p class="showcase-head-desc">Every landscape is a test. Every path a choice between what was and what could be forged anew beneath an unforgiving, Timefall-soaked sky.</p>
   </div>
-  <div class="showcase-cards">
-    <!-- Card 1 -->
+  <div class="showcase-track">
     <div class="sc-card">
-      <div class="sc-card-inner">
-        <div class="sc-bg">
-          <svg width="420" height="560" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="c1g" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#060c14"/>
-                <stop offset="50%" stop-color="#0d1c2c"/>
-                <stop offset="100%" stop-color="#060708"/>
-              </linearGradient>
-              <radialGradient id="c1glow" cx="50%" cy="40%" r="50%">
-                <stop offset="0%" stop-color="#3dd8d8" stop-opacity="0.08"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="420" height="560" fill="url(#c1g)"/>
-            <rect width="420" height="560" fill="url(#c1glow)"/>
-            <!-- Mountainscape -->
-            <path d="M0 400 L80 300 L150 350 L230 260 L310 320 L380 280 L420 300 L420 560 L0 560Z" fill="#080f18" opacity="0.9"/>
-            <path d="M0 450 L60 380 L140 420 L220 350 L300 390 L380 360 L420 380 L420 560 L0 560Z" fill="#060b14"/>
-            <!-- Exoskeleton / cargo frame lines -->
-            <g stroke="#3dd8d8" stroke-width="0.8" fill="none" opacity="0.3">
-              <rect x="160" y="150" width="100" height="180" rx="4"/>
-              <line x1="160" y1="200" x2="260" y2="200"/>
-              <line x1="160" y1="250" x2="260" y2="250"/>
-              <line x1="160" y1="300" x2="260" y2="300"/>
-              <circle cx="210" cy="140" r="20"/>
-              <line x1="210" y1="120" x2="210" y2="160"/>
-            </g>
-            <g fill="#3dd8d8" opacity="0.4">
-              <rect x="200" y="195" width="6" height="6" rx="1"/>
-              <rect x="200" y="245" width="6" height="6" rx="1"/>
-              <rect x="200" y="295" width="6" height="6" rx="1"/>
-            </g>
-            <!-- Scan effect -->
-            <rect x="0" y="0" width="420" height="2" fill="#3dd8d8" opacity="0.15">
-              <animateTransform attributeName="transform" type="translate" from="0,0" to="0,560" dur="4s" repeatCount="indefinite"/>
-            </rect>
-          </svg>
-        </div>
-        <div class="sc-overlay"></div>
-        <div class="sc-content">
-          <div class="sc-num">SYS — 001</div>
-          <div class="sc-title">BRIDGES EXOSKELETON<br>MARK IV</div>
-          <div class="sc-desc">Titanium-chiral composite frame designed to carry up to 350kg across impossible terrain.</div>
-          <div class="sc-arrow">ACCESS SPECS</div>
-        </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=700&q=85" alt="Frozen Pass">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-01</span>
+        <h3 class="sc-title">FROZEN PASS</h3>
+        <p class="sc-body">Sub-zero traversal where Timefall crystallizes instantly. Cargo weight becomes existential. One wrong step across the ice ends the mission — and the carrier.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
       </div>
     </div>
-
-    <!-- Card 2 -->
     <div class="sc-card">
-      <div class="sc-card-inner">
-        <div class="sc-bg">
-          <svg width="420" height="560" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="c2g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#060a0e"/>
-                <stop offset="100%" stop-color="#0a1820"/>
-              </linearGradient>
-              <radialGradient id="c2glow" cx="30%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#c8850a" stop-opacity="0.06"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="420" height="560" fill="url(#c2g)"/>
-            <rect width="420" height="560" fill="url(#c2glow)"/>
-            <!-- Rain pattern -->
-            <g stroke="#8aa0b0" stroke-width="0.4" opacity="0.15">
-              <line x1="50" y1="0" x2="30" y2="300"/>
-              <line x1="120" y1="0" x2="100" y2="350"/>
-              <line x1="200" y1="0" x2="180" y2="300"/>
-              <line x1="280" y1="0" x2="260" y2="320"/>
-              <line x1="360" y1="0" x2="340" y2="280"/>
-              <line x1="410" y1="0" x2="390" y2="250"/>
-            </g>
-            <!-- Terrain -->
-            <path d="M0 420 L100 380 L200 400 L300 360 L420 390 L420 560 L0 560Z" fill="#08101a"/>
-            <!-- Odradek scanner -->
-            <g transform="translate(210,200)" stroke="#c8850a" stroke-width="1" fill="none" opacity="0.5">
-              <circle cx="0" cy="0" r="40"/>
-              <circle cx="0" cy="0" r="25"/>
-              <circle cx="0" cy="0" r="10"/>
-              <line x1="-50" y1="0" x2="50" y2="0"/>
-              <line x1="0" y1="-50" x2="0" y2="50"/>
-              <line x1="-35" y1="-35" x2="35" y2="35"/>
-              <line x1="35" y1="-35" x2="-35" y2="35"/>
-              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8s" repeatCount="indefinite"/>
-            </g>
-            <circle cx="210" cy="200" r="5" fill="#c8850a" opacity="0.6"/>
-          </svg>
-        </div>
-        <div class="sc-overlay"></div>
-        <div class="sc-content">
-          <div class="sc-num">SYS — 002</div>
-          <div class="sc-title">ODRADEK SCANNER<br>TYPE-III</div>
-          <div class="sc-desc">Multi-spectrum chiral density scanner detects BTs across 200 meter radius in timefall conditions.</div>
-          <div class="sc-arrow">ACCESS SPECS</div>
-        </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=700&q=85" alt="Mire Basin">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-02</span>
+        <h3 class="sc-title">MIRE BASIN</h3>
+        <p class="sc-body">Still water hides ancient Beached Things. BTs linger just beneath the surface. Cross wrong and they surface — triggering catastrophic Voidout events.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
       </div>
     </div>
-
-    <!-- Card 3 -->
     <div class="sc-card">
-      <div class="sc-card-inner">
-        <div class="sc-bg">
-          <svg width="420" height="560" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="c3g" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stop-color="#060708"/>
-                <stop offset="60%" stop-color="#08121a"/>
-                <stop offset="100%" stop-color="#0a0c0e"/>
-              </linearGradient>
-              <radialGradient id="c3glow" cx="50%" cy="70%" r="50%">
-                <stop offset="0%" stop-color="#3dd8d8" stop-opacity="0.1"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="420" height="560" fill="url(#c3g)"/>
-            <rect width="420" height="560" fill="url(#c3glow)"/>
-            <!-- Network / strand web -->
-            <g stroke="#3dd8d8" stroke-width="0.5" fill="none" opacity="0.25">
-              <line x1="210" y1="280" x2="80" y2="180"/>
-              <line x1="210" y1="280" x2="340" y2="150"/>
-              <line x1="210" y1="280" x2="50" y2="380"/>
-              <line x1="210" y1="280" x2="370" y2="350"/>
-              <line x1="210" y1="280" x2="200" y2="120"/>
-              <line x1="210" y1="280" x2="150" y2="440"/>
-              <line x1="210" y1="280" x2="300" y2="460"/>
-            </g>
-            <!-- Nodes -->
-            <g fill="#3dd8d8">
-              <circle cx="210" cy="280" r="8" opacity="0.7"/>
-              <circle cx="80" cy="180" r="4" opacity="0.4"/>
-              <circle cx="340" cy="150" r="5" opacity="0.5"/>
-              <circle cx="50" cy="380" r="3" opacity="0.3"/>
-              <circle cx="370" cy="350" r="4" opacity="0.4"/>
-              <circle cx="200" cy="120" r="3" opacity="0.35"/>
-              <circle cx="150" cy="440" r="3" opacity="0.3"/>
-              <circle cx="300" cy="460" r="4" opacity="0.4"/>
-            </g>
-            <!-- Pulse animation -->
-            <circle cx="210" cy="280" r="20" fill="none" stroke="#3dd8d8" stroke-width="1" opacity="0">
-              <animate attributeName="r" values="8;60" dur="3s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.5;0" dur="3s" repeatCount="indefinite"/>
-            </circle>
-            <!-- Terrain -->
-            <path d="M0 480 L100 460 L200 470 L300 455 L420 465 L420 560 L0 560Z" fill="#060b12"/>
-          </svg>
-        </div>
-        <div class="sc-overlay"></div>
-        <div class="sc-content">
-          <div class="sc-num">SYS — 003</div>
-          <div class="sc-title">CHIRAL NETWORK<br>RELAY NODE</div>
-          <div class="sc-desc">Portable network anchor point. Deploy to extend the chiral communication grid into unmapped territories.</div>
-          <div class="sc-arrow">ACCESS SPECS</div>
-        </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=700&q=85" alt="Timefall Valley">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-03</span>
+        <h3 class="sc-title">TIMEFALL VALLEY</h3>
+        <p class="sc-body">Rain that ages everything it touches. Equipment rusts. Cargo degrades. Move fast. Stay dry. The sky itself is your enemy here in these cursed lowlands.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
       </div>
     </div>
-
-    <!-- Card 4 -->
     <div class="sc-card">
-      <div class="sc-card-inner">
-        <div class="sc-bg">
-          <svg width="420" height="560" viewBox="0 0 420 560" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="c4g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#08100a"/>
-                <stop offset="100%" stop-color="#060708"/>
-              </linearGradient>
-              <radialGradient id="c4glow" cx="50%" cy="45%" r="40%">
-                <stop offset="0%" stop-color="#c8850a" stop-opacity="0.12"/>
-                <stop offset="100%" stop-color="transparent"/>
-              </radialGradient>
-            </defs>
-            <rect width="420" height="560" fill="url(#c4g)"/>
-            <rect width="420" height="560" fill="url(#c4glow)"/>
-            <!-- Timefall clock/aging mechanism -->
-            <g transform="translate(210,230)" fill="none" stroke="#c8850a" stroke-width="0.8" opacity="0.4">
-              <circle cx="0" cy="0" r="70"/>
-              <circle cx="0" cy="0" r="55"/>
-              <circle cx="0" cy="0" r="5" fill="#c8850a" opacity="0.6"/>
-              <!-- Clock hands -->
-              <line x1="0" y1="0" x2="0" y2="-50" stroke-width="1.5">
-                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
-              </line>
-              <line x1="0" y1="0" x2="35" y2="35" stroke-width="1">
-                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite"/>
-              </line>
-              <!-- Tick marks -->
-              <g id="ticks">
-                <line x1="0" y1="-55" x2="0" y2="-68"/>
-                <line x1="27.5" y1="-47.6" x2="34" y2="-58.9" transform="rotate(30)"/>
-                <line x1="47.6" y1="-27.5" x2="58.9" y2="-34" transform="rotate(60)"/>
-                <line x1="55" y1="0" x2="68" y2="0" transform="rotate(90)"/>
-                <line x1="47.6" y1="27.5" x2="58.9" y2="34" transform="rotate(120)"/>
-                <line x1="27.5" y1="47.6" x2="34" y2="58.9" transform="rotate(150)"/>
-                <line x1="0" y1="55" x2="0" y2="68" transform="rotate(180)"/>
-                <line x1="-27.5" y1="47.6" x2="-34" y2="58.9" transform="rotate(210)"/>
-                <line x1="-47.6" y1="27.5" x2="-58.9" y2="34" transform="rotate(240)"/>
-                <line x1="-55" y1="0" x2="-68" y2="0" transform="rotate(270)"/>
-                <line x1="-47.6" y1="-27.5" x2="-58.9" y2="-34" transform="rotate(300)"/>
-                <line x1="-27.5" y1="-47.6" x2="-34" y2="-58.9" transform="rotate(330)"/>
-              </g>
-            </g>
-            <!-- Aging artifacts -->
-            <g fill="#c8850a" opacity="0.15">
-              <rect x="30" y="100" width="40" height="2" rx="1"/>
-              <rect x="90" y="80" width="20" height="2" rx="1"/>
-              <rect x="300" y="120" width="50" height="2" rx="1"/>
-              <rect x="360" y="90" width="30" height="2" rx="1"/>
-            </g>
-            <!-- Terrain -->
-            <path d="M0 460 L100 430 L200 445 L300 425 L420 440 L420 560 L0 560Z" fill="#08100c"/>
-          </svg>
-        </div>
-        <div class="sc-overlay"></div>
-        <div class="sc-content">
-          <div class="sc-num">SYS — 004</div>
-          <div class="sc-title">TIMEFALL SHELTER<br>EMERGENCY UNIT</div>
-          <div class="sc-desc">Portable timefall-resistant habitat. Deploy in under 90 seconds. Protects cargo and personnel from rapid aging.</div>
-          <div class="sc-arrow">ACCESS SPECS</div>
-        </div>
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=700&q=85" alt="Chiral Ridge">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-04</span>
+        <h3 class="sc-title">CHIRAL RIDGE</h3>
+        <p class="sc-body">Dense chirality disrupts navigation entirely. BB connections weaken. Only the body knows the path when every instrument fails beneath the oppressive peaks.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
+      </div>
+    </div>
+    <div class="sc-card">
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=700&q=85" alt="Coastal Ruin">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-05</span>
+        <h3 class="sc-title">COASTAL RUIN</h3>
+        <p class="sc-body">Knot Cities once stood here. Towers of human ambition. Now the sea and the Voidout craters reclaim what humanity abandoned in its final hours of desperate flight.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
+      </div>
+    </div>
+    <div class="sc-card">
+      <img class="sc-card-img" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=85" alt="Mountain Knot">
+      <div class="sc-card-top-line"></div>
+      <div class="sc-card-overlay"></div>
+      <div class="sc-card-content">
+        <span class="sc-num">// ZONE REG-06</span>
+        <h3 class="sc-title">MOUNTAIN KNOT</h3>
+        <p class="sc-body">Perched at extreme altitude where MULE camps patrol the ridge lines. Ziplines and PCC scaffolding are the only mercy the hostile landscape offers.</p>
+        <div class="sc-cta">Access Zone Metrics</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- WORLD DATA STRIP -->
-<section id="world">
-  <div class="section-label reveal" style="padding:0 60px;margin-bottom:60px;">03 — OPERATIONAL DATA</div>
-  <div class="world-strip">
-    <div class="world-item reveal">
-      <div class="world-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <div class="world-item-title">Chiral Network</div>
-      <div class="world-item-sub">84% COVERAGE</div>
-    </div>
-    <div class="world-item reveal" style="transition-delay:0.1s;">
-      <div class="world-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-      </div>
-      <div class="world-item-title">Timefall Index</div>
-      <div class="world-item-sub">SEVERE / RISING</div>
-    </div>
-    <div class="world-item reveal" style="transition-delay:0.2s;">
-      <div class="world-icon">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
-      <div class="world-item-title">Active Porters</div>
-      <div class="world-item-sub">12,847 ONLINE</div>
-    </div>
-    <div class="world-item reveal" style="transition-delay:0.3s;">
-      <div class="world-icon">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      </div>
-      <div class="world-item-title">Likes Received</div>
-      <div class="world-item-sub">∞ CONNECTIONS</div>
-    </div>
-    <div class="world-item reveal" style="transition-delay:0.4s;">
-      <div class="world-icon">
-        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <div class="world-item-title">BT Zones</div>
-      <div class="world-item-sub">ACTIVE / 223 SITES</div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="cta-bg-grid"></div>
-  <div class="cta-ring"></div>
-  <div class="cta-ring"></div>
-  <div class="cta-ring"></div>
-
-  <!-- Atmospheric landscape behind CTA -->
-  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.15;" viewBox="0 0 1440 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <filter id="ctaBlur"><feGaussianBlur stdDeviation="12"/></filter>
-      <radialGradient id="ctaGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#3dd8d8" stop-opacity="0.15"/>
-        <stop offset="100%" stop-color="transparent"/>
-      </radialGradient>
-    </defs>
-    <rect width="1440" height="700" fill="url(#ctaGlow)"/>
-    <g filter="url(#ctaBlur)">
-      <path d="M0 500 L200 380 L350 440 L500 340 L650 420 L800 320 L950 400 L1100 360 L1250 410 L1440 380 L1440 700 L0 700Z" fill="#0d1e2c" opacity="0.8"/>
-    </g>
-    <!-- Strand web for CTA -->
-    <g stroke="#3dd8d8" stroke-width="0.6" fill="none" opacity="0.12">
-      <line x1="720" y1="350" x2="200" y2="150"/>
-      <line x1="720" y1="350" x2="1200" y2="200"/>
-      <line x1="720" y1="350" x2="400" y2="500"/>
-      <line x1="720" y1="350" x2="1100" y2="520"/>
-      <line x1="720" y1="350" x2="720" y2="100"/>
-      <line x1="720" y1="350" x2="100" y2="350"/>
-      <line x1="720" y1="350" x2="1340" y2="350"/>
-    </g>
-    <g fill="#3dd8d8" opacity="0.2">
-      <circle cx="720" cy="350" r="6"/>
-      <circle cx="200" cy="150" r="3"/>
-      <circle cx="1200" cy="200" r="4"/>
-      <circle cx="400" cy="500" r="2"/>
-      <circle cx="1100" cy="520" r="3"/>
-    </g>
-  </svg>
-
-  <div class="cta-center reveal">
-    <div class="cta-overline">BRIDGES INITIATIVE</div>
-    <h2 class="cta-h2">
-      The strand<br>
-      <strong>connects us all</strong>
+<!-- ═══════════════════════════════════════ WORLD SYSTEM ═══════════════════════════════════════ -->
+<section id="world-system">
+  <div class="world-center">
+    <div class="world-eyebrow reveal">Chapter / 04 — The Architecture</div>
+    <h2 class="world-title reveal reveal-d1">
+      THE<br>
+      <span class="ghost-text">STRAND</span><br>
+      SYSTEM
     </h2>
-    <p class="cta-body">
-      "What binds us? The strand. Invisible, unbreakable. Even in death, we are never truly disconnected."
-    </p>
-    <div class="cta-btns">
-      <a href="#" class="btn-primary">JOIN BRIDGES</a>
-      <a href="#story" class="btn-outline">VIEW THE WORLD</a>
+    <p class="world-body reveal reveal-d2">Connection is not just survival — it is the only rebellion against the silence that consumed everything. Build the Chiral Network. Carry what others cannot. Bridge the impossible distance between one soul and the next across a world that forgot how to hold together.</p>
+
+    <div class="world-node-grid reveal reveal-d3">
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          // SYS-01
+        </div>
+        <h3 class="wn-title">CHIRAL NETWORK</h3>
+        <p class="wn-body">A quantum communication mesh woven between surviving enclaves. Every node Sam connects restores a fragment of the old world to those who believed it gone forever.</p>
+      </div>
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          // SYS-02
+        </div>
+        <h3 class="wn-title">PORTER SYSTEM</h3>
+        <p class="wn-body">Carriers who walk so others survive. Their routes are etched in muscle memory — invisible trails across the hostile expanse, worn by sheer human will into the broken earth.</p>
+      </div>
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          // SYS-03
+        </div>
+        <h3 class="wn-title">TIMEFALL PROTOCOL</h3>
+        <p class="wn-body">Against aging rain and temporal distortion, porters develop movement disciplines that defy atmospheric erosion — keeping cargo intact through the most violent temporal storms.</p>
+      </div>
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          // SYS-04
+        </div>
+        <h3 class="wn-title">BB INTERFACE</h3>
+        <p class="wn-body">Bridge Babies sense the Beached Things. Their perception bridges the world of the living and the Seam — an umbilical cord stretched between life and extinction itself.</p>
+      </div>
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          // SYS-05
+        </div>
+        <h3 class="wn-title">STRUCTURE GRID</h3>
+        <p class="wn-body">Shared ladders, ropes, shelters, roads — infrastructure built by strangers for strangers. The Social Strand System: the purest expression of hope left in a world stripped bare.</p>
+      </div>
+      <div class="world-node">
+        <div class="wn-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          // SYS-06
+        </div>
+        <h3 class="wn-title">LIKE ECONOMY</h3>
+        <p class="wn-body">Gratitude made tangible and visible. A bridge you built last month still earns acknowledgment from every porter who crosses it today. Connection outlasts the individual presence.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ═══════════════════════════════════════ WORLD STRIP ═══════════════════════════════════════ -->
+<section id="world-strip">
+  <div class="ws-grid reveal">
+    <div class="ws-item">
+      <div class="ws-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="ws-title">Chiral Revenue</div>
+      <div class="ws-val">94.21 CR/SEC</div>
+    </div>
+    <div class="ws-item">
+      <div class="ws-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+      <div class="ws-title">Timefall Delay</div>
+      <div class="ws-val">00:14:22 TO DROP</div>
+    </div>
+    <div class="ws-item">
+      <div class="ws-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div class="ws-title">BB Synapse Speed</div>
+      <div class="ws-val">0.42 MS LATENCY</div>
+    </div>
+    <div class="ws-item">
+      <div class="ws-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="ws-title">Cargo Integrity</div>
+      <div class="ws-val">99.89% OPTIMAL</div>
+    </div>
+    <div class="ws-item">
+      <div class="ws-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      <div class="ws-title">Strand Count</div>
+      <div class="ws-val">1,409,211 ACTIVE</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ NETWORK PANEL ═══════════════════════════════════════ -->
+<section id="network">
+  <div class="network-inner">
+    <div class="s-label reveal"><span class="ch-num">05 —</span>Real-Time Reconstruction Feed</div>
+    <div class="network-terminal reveal reveal-d1">
+      <div class="nt-header">
+        <h2 class="nt-title">CHIRAL KNOT<br>STREAM LAYER <em>DATA</em></h2>
+        <div class="nt-meta">
+          <div class="nt-meta-line">SYS_STATUS // OPERATIONAL</div>
+          <div class="nt-meta-line active">TIMEFALL_ACTIVE // TRUE</div>
+          <div class="nt-meta-line">CHIRAL_FREQ // 841.293 GHz</div>
+          <div class="nt-meta-line">BUILD // DECIMA-ENGINE-4.7.2</div>
+          <div class="nt-meta-line">Q-PID // RESONANCE LOCKED</div>
+        </div>
+      </div>
+      <p style="font-family:var(--ff-body);font-size:16px;line-height:1.8;color:rgba(138,154,170,0.55);font-weight:300;max-width:720px;margin-bottom:36px">This panel decrypts raw signals from historical data streams collected along Sam Porter Bridges' continental delivery pathways — visual telemetry gathered directly from the Chiral Network's primary terminal servers across all seven reconnected regions of the former United Cities of America.</p>
+      <img class="network-vis" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=80" alt="Chiral Network visualization">
+      <div class="network-data-row">
+        <div class="nd-cell">
+          <div class="nd-val">841<span>.293 GHz</span></div>
+          <div class="nd-label">Chiral Frequency Base</div>
+        </div>
+        <div class="nd-cell">
+          <div class="nd-val">0.004<span>%</span></div>
+          <div class="nd-label">Voidout Probability</div>
+        </div>
+        <div class="nd-cell">
+          <div class="nd-val">23<span>K+</span></div>
+          <div class="nd-label">Active Porter Units</div>
+        </div>
+        <div class="nd-cell">
+          <div class="nd-val">99.89<span>%</span></div>
+          <div class="nd-label">Network Uptime</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TERRAIN DIVIDER 3 -->
+<div class="terrain-divider reveal-scale" data-label="// EDGE KNOT CITY — FINAL APPROACH //">
+  <div class="td-img" style="background-image:url('https://images.unsplash.com/photo-1547483238-2cbf88ba2443?w=1920&q=80')"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ CTA ═══════════════════════════════════════ -->
+<section id="cta">
+  <div class="cta-bg-img"></div>
+  <div class="cta-bg-grid"></div>
+  <div class="cta-bg-overlay"></div>
+  <div class="cta-bg-gradient"></div>
+  <div class="cta-rings">
+    <div class="cta-ring"></div>
+    <div class="cta-ring"></div>
+    <div class="cta-ring"></div>
+    <div class="cta-ring"></div>
+  </div>
+  <div class="cta-content reveal">
+    <div class="cta-overline">System Dispatch Interface — Chapter 06</div>
+    <h2 class="cta-title">
+      THE WORLD<br>NEEDS A
+      <span class="accent"> PORTER</span>
+      <span class="outline">RECONNECT NOW</span>
+    </h2>
+    <p class="cta-body">There are those who wait for the world to be restored — and those who walk out into the Timefall and the silence and restore it themselves, one impossible step at a time. Tomorrow is in your hands.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn-cta-primary"><span>Sync Chiral Terminal</span></a>
+      <a href="#story" class="btn-cta-outline">View Archive Logs</a>
+    </div>
+  </div>
+  <div class="cta-bottom-band">
+    <span class="cta-band-item">// BRIDGES LOGISTICS — RECONNECT INITIATIVE — UNIT DS-001</span>
+    <span class="cta-band-item live">● TIMEFALL ACTIVE — STAY SHELTERED</span>
+    <span class="cta-band-item">CLASSIFIED // LEVEL 5 CLEARANCE REQUIRED</span>
+    <span class="cta-band-item" id="cta-timer">T+00:00:00 // COUNTING</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ FOOTER ═══════════════════════════════════════ -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo">BRIDGES / TYPE-IV</div>
-      <p>In a fractured world, every delivery is an act of hope. Every connection, a small victory against the void.</p>
+      <div class="footer-logo-wrap">
+        <a href="#" class="footer-logo">BRIDGES</a>
+        <span class="footer-logo-sub">// KOJIMA PRODUCTIONS // RE-LINK INITIATIVE</span>
+      </div>
+      <p class="footer-tagline">We carry the weight of a broken world so that someday, it might carry itself again. Every step forward is a strand connecting what was lost to what can be rebuilt.</p>
     </div>
-    <div class="footer-col">
-      <h4>Operations</h4>
-      <a href="#">Mission Briefing</a>
-      <a href="#">Delivery Routes</a>
-      <a href="#">Chiral Network</a>
-      <a href="#">Porter Registry</a>
+    <div>
+      <h4 class="footer-col-title">Traverse</h4>
+      <ul class="footer-links">
+        <li><a href="#">The World</a></li>
+        <li><a href="#">Porter Codex</a></li>
+        <li><a href="#">Terrain Atlas</a></li>
+        <li><a href="#">Chiral Map</a></li>
+        <li><a href="#">Zone Classification</a></li>
+      </ul>
     </div>
-    <div class="footer-col">
-      <h4>Equipment</h4>
-      <a href="#">Exoskeletons</a>
-      <a href="#">Vehicles</a>
-      <a href="#">Weapons</a>
-      <a href="#">Infrastructure</a>
+    <div>
+      <h4 class="footer-col-title">Systems</h4>
+      <ul class="footer-links">
+        <li><a href="#">Strand Network</a></li>
+        <li><a href="#">BB Interface</a></li>
+        <li><a href="#">Timefall Data</a></li>
+        <li><a href="#">BT Registry</a></li>
+        <li><a href="#">Exo Diagnostics</a></li>
+      </ul>
     </div>
-    <div class="footer-col">
-      <h4>Intelligence</h4>
-      <a href="#">BT Reports</a>
-      <a href="#">Weather Ops</a>
-      <a href="#">Voidout Zones</a>
-      <a href="#">Lost Cargo</a>
+    <div>
+      <h4 class="footer-col-title">Archive</h4>
+      <ul class="footer-links">
+        <li><a href="#">Origin Files</a></li>
+        <li><a href="#">Extinction Log</a></li>
+        <li><a href="#">Carrier Records</a></li>
+        <li><a href="#">Mission Archive</a></li>
+        <li><a href="#">UCA Protocol</a></li>
+      </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© BRIDGES CORP — RECONNECTING THE BROKEN WORLD</div>
-    <div class="footer-coord">64°08'N · 21°56'W · REYKJAVIK SECTOR</div>
+    <span class="footer-copy">© 2019 KOJIMA PRODUCTIONS // ALL RIGHTS RESERVED</span>
+    <span class="footer-copy">KEEP ON KEEPING ON — WE CARRY WHAT OTHERS CANNOT</span>
+    <span class="footer-build">UNIT DS-001 // DECIMA ENGINE 4.7.2 // GRID STABLE 4091 ALPHA</span>
   </div>
 </footer>
 
+<!-- ═══════════════════════════════════════ SCRIPTS ═══════════════════════════════════════ -->
 <script>
-// CURSOR
-const cur=document.getElementById('cur');
-const curRing=document.getElementById('curRing');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;curRing.style.left=rx+'px';curRing.style.top=ry+'px';requestAnimationFrame(animRing);}
-animRing();
-document.querySelectorAll('a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{curRing.style.width='50px';curRing.style.height='50px';curRing.style.borderColor='rgba(61,216,216,0.8)';});
-  el.addEventListener('mouseleave',()=>{curRing.style.width='32px';curRing.style.height='32px';curRing.style.borderColor='rgba(61,216,216,0.5)';});
-});
+(function(){
 
-// RAIN
-const rain=document.getElementById('rain');
-const rctx=rain.getContext('2d');
-function resizeRain(){rain.width=window.innerWidth;rain.height=window.innerHeight;}
+// ─── CURSOR ───
+const cur=document.getElementById('cur'),
+      curRing=document.getElementById('curRing'),
+      curTrail=document.getElementById('curTrail');
+let mx=0,my=0,tx=0,ty=0,trx=0,try_=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+  cur.style.transition='none';
+});
+function animateCursors(){
+  tx+=(mx-tx)*0.14;ty+=(my-ty)*0.24;
+  trx+=(mx-trx)*0.07;try_+=(my-try_)*0.17;
+  curRing.style.left=tx+'px';curRing.style.top=ty+'px';
+  curTrail.style.left=trx+'px';curTrail.style.top=try_+'px';
+  requestAnimationFrame(animateCursors)
+}
+animateCursors();
+document.querySelectorAll('a,button,.sc-card,.world-node,.ws-item,.nd-cell,.cargo-frame').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{
+    curRing.style.width='56px';curRing.style.height='56px';
+    curRing.style.borderColor='rgba(200,184,154,0.5)'
+  });
+  el.addEventListener('mouseleave',()=>{
+    curRing.style.width='34px';curRing.style.height='34px';
+    curRing.style.borderColor='rgba(61,216,216,0.45)'
+  })
+});
+document.addEventListener('mousedown',()=>{curRing.style.width='22px';curRing.style.height='22px';curRing.style.borderColor='rgba(200,133,10,0.8)'});
+document.addEventListener('mouseup',()=>{curRing.style.width='34px';curRing.style.height='34px';curRing.style.borderColor='rgba(61,216,216,0.45)'});
+
+// ─── RAIN CANVAS ───
+const rc=document.getElementById('rain-canvas');
+const rctx=rc.getContext('2d');
+let raindrops=[];
+function resizeRain(){
+  rc.width=window.innerWidth;rc.height=window.innerHeight;
+  raindrops=[];
+  for(let i=0;i<180;i++){
+    raindrops.push({
+      x:Math.random()*rc.width,
+      y:Math.random()*rc.height,
+      l:Math.random()*22+10,
+      v:Math.random()*4+5,
+      o:Math.random()*0.2+0.04
+    })
+  }
+}
 resizeRain();
 window.addEventListener('resize',resizeRain);
-const drops=[];
-for(let i=0;i<180;i++){drops.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,len:Math.random()*20+10,speed:Math.random()*3+2,opacity:Math.random()*0.4+0.05});}
 function drawRain(){
-  rctx.clearRect(0,0,rain.width,rain.height);
-  drops.forEach(d=>{
+  rctx.clearRect(0,0,rc.width,rc.height);
+  raindrops.forEach(d=>{
+    rctx.save();
+    rctx.globalAlpha=d.o;
+    rctx.strokeStyle='#7aabcc';
+    rctx.lineWidth=0.6;
     rctx.beginPath();
     rctx.moveTo(d.x,d.y);
-    rctx.lineTo(d.x-d.len*0.2,d.y+d.len);
-    rctx.strokeStyle=`rgba(180,210,230,${d.opacity})`;
-    rctx.lineWidth=0.5;
+    rctx.lineTo(d.x-d.l*0.18,d.y+d.l);
     rctx.stroke();
-    d.y+=d.speed;
-    d.x-=d.speed*0.2;
-    if(d.y>rain.height){d.y=-30;d.x=Math.random()*rain.width;}
+    rctx.restore();
+    d.y+=d.v*2.2;d.x-=d.v*0.45;
+    if(d.y>rc.height+20){d.y=-20;d.x=Math.random()*rc.width}
   });
-  requestAnimationFrame(drawRain);
+  requestAnimationFrame(drawRain)
 }
 drawRain();
 
-// STRANDS
-const sc=document.getElementById('strands');
+// ─── STRAND CANVAS ───
+const sc=document.getElementById('strand-canvas');
 const sctx=sc.getContext('2d');
-function resizeSc(){sc.width=window.innerWidth;sc.height=window.innerHeight;}
-resizeSc();
-window.addEventListener('resize',resizeSc);
-const nodes=[];
-const NUM=12;
-for(let i=0;i<NUM;i++){nodes.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*2+1});}
-let mouseNode={x:-999,y:-999};
-document.addEventListener('mousemove',e=>{mouseNode.x=e.clientX;mouseNode.y=e.clientY;});
+let nodes=[];
+let mousePt={x:-9999,y:-9999};
+function resizeStrands(){
+  sc.width=window.innerWidth;sc.height=window.innerHeight;
+  nodes=[];
+  for(let i=0;i<52;i++){
+    nodes.push({
+      x:Math.random()*sc.width,
+      y:Math.random()*sc.height,
+      vx:(Math.random()-0.5)*0.38,
+      vy:(Math.random()-0.5)*0.38,
+      r:Math.random()*1.6+0.5,
+      warm:Math.random()>0.65
+    })
+  }
+}
+resizeStrands();
+window.addEventListener('resize',resizeStrands);
+document.addEventListener('mousemove',e=>{mousePt.x=e.clientX;mousePt.y=e.clientY});
 function drawStrands(){
   sctx.clearRect(0,0,sc.width,sc.height);
   nodes.forEach(n=>{
     n.x+=n.vx;n.y+=n.vy;
     if(n.x<0||n.x>sc.width)n.vx*=-1;
-    if(n.y<0||n.y>sc.height)n.vy*=-1;
+    if(n.y<0||n.y>sc.height)n.vy*=-1
   });
-  const all=[...nodes,mouseNode];
+  const all=[...nodes,mousePt];
   for(let i=0;i<nodes.length;i++){
     for(let j=i+1;j<all.length;j++){
       const dx=nodes[i].x-all[j].x,dy=nodes[i].y-all[j].y;
       const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<280){
-        const alpha=(1-dist/280)*0.25;
+      if(dist<260){
+        const alpha=(1-dist/260)*0.2;
+        const isMouseLink=j===nodes.length;
+        sctx.save();
+        sctx.globalAlpha=isMouseLink?alpha*2.2:alpha;
+        const grad=sctx.createLinearGradient(nodes[i].x,nodes[i].y,all[j].x,all[j].y);
+        if(nodes[i].warm){
+          grad.addColorStop(0,'rgba(200,184,154,0.8)');
+          grad.addColorStop(1,'rgba(61,216,216,0.4)')
+        } else {
+          grad.addColorStop(0,'rgba(61,216,216,0.8)');
+          grad.addColorStop(1,'rgba(200,184,154,0.3)')
+        }
+        sctx.strokeStyle=grad;
+        sctx.lineWidth=isMouseLink?0.8:0.5;
         sctx.beginPath();
         sctx.moveTo(nodes[i].x,nodes[i].y);
         sctx.lineTo(all[j].x,all[j].y);
-        sctx.strokeStyle=`rgba(61,216,216,${alpha})`;
-        sctx.lineWidth=0.5;
         sctx.stroke();
+        sctx.restore()
       }
     }
+    sctx.save();
+    sctx.globalAlpha=nodes[i].warm?0.35:0.4;
+    sctx.fillStyle=nodes[i].warm?'#c8b89a':'#3dd8d8';
     sctx.beginPath();
     sctx.arc(nodes[i].x,nodes[i].y,nodes[i].r,0,Math.PI*2);
-    sctx.fillStyle='rgba(61,216,216,0.4)';
     sctx.fill();
+    sctx.restore()
   }
-  requestAnimationFrame(drawStrands);
+  requestAnimationFrame(drawStrands)
 }
 drawStrands();
 
-// REVEAL ON SCROLL
-const reveals=document.querySelectorAll('.reveal');
-const obs=new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
-},{threshold:0.15});
-reveals.forEach(el=>obs.observe(el));
+// ─── FOG CANVAS ───
+const fc=document.getElementById('fog-canvas');
+const fctx=fc.getContext('2d');
+let fogPatches=[];
+function resizeFog(){
+  fc.width=window.innerWidth;fc.height=window.innerHeight;
+  fogPatches=[];
+  for(let i=0;i<8;i++){
+    fogPatches.push({
+      x:Math.random()*fc.width,
+      y:Math.random()*fc.height,
+      r:Math.random()*300+150,
+      vx:(Math.random()-0.5)*0.15,
+      vy:(Math.random()-0.5)*0.08,
+      a:Math.random()*0.04+0.01,
+      t:Math.random()*Math.PI*2
+    })
+  }
+}
+resizeFog();
+window.addEventListener('resize',resizeFog);
+function drawFog(){
+  fctx.clearRect(0,0,fc.width,fc.height);
+  fogPatches.forEach(p=>{
+    p.t+=0.005;
+    p.x+=p.vx+Math.sin(p.t)*0.08;
+    p.y+=p.vy+Math.cos(p.t*0.7)*0.05;
+    if(p.x<-p.r)p.x=fc.width+p.r;
+    if(p.x>fc.width+p.r)p.x=-p.r;
+    if(p.y<-p.r)p.y=fc.height+p.r;
+    if(p.y>fc.height+p.r)p.y=-p.r;
+    const grad=fctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+    grad.addColorStop(0,`rgba(120,160,180,${p.a})`);
+    grad.addColorStop(1,'rgba(120,160,180,0)');
+    fctx.save();fctx.globalAlpha=1;
+    fctx.fillStyle=grad;
+    fctx.beginPath();fctx.arc(p.x,p.y,p.r,0,Math.PI*2);fctx.fill();
+    fctx.restore()
+  });
+  requestAnimationFrame(drawFog)
+}
+drawFog();
 
-// PARALLAX HERO
+// ─── NAV SCROLL ───
+const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>{
-  const sy=window.scrollY;
-  const heroContent=document.querySelector('.hero-content');
-  if(heroContent)heroContent.style.transform=`translateY(${sy*0.3}px)`;
-  const heroSvg=document.querySelector('.hero-svg-landscape');
-  if(heroSvg)heroSvg.style.transform=`translateY(${sy*0.15}px)`;
-});
+  nav.classList.toggle('scrolled',window.scrollY>50)
+},{passive:true});
+
+// ─── SCROLL REVEAL ───
+const allReveals=document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale');
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})
+},{threshold:0.1,rootMargin:'0px 0px -60px 0px'});
+allReveals.forEach(el=>revealObs.observe(el));
+
+// ─── COUNTER ANIMATION ───
+function animCount(el,target){
+  const dur=2200,start=performance.now();
+  const fmt=n=>{
+    if(target>=100000)return Math.round(n).toLocaleString();
+    return Math.round(n).toLocaleString()
+  };
+  function step(now){
+    const p=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-p,4);
+    el.textContent=fmt(ease*target);
+    if(p<1)requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+const countObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('[data-count]').forEach(el=>{
+        const target=parseInt(el.dataset.count);
+        const unit=el.querySelector('.unit');
+        const unitHtml=unit?unit.outerHTML:'';
+        animCount({
+          get textContent(){return el.textContent},
+          set textContent(v){el.innerHTML=v+unitHtml}
+        },target)
+      });
+      countObs.unobserve(e.target)
+    }
+  })
+},{threshold:0.3});
+document.querySelectorAll('.metrics-band').forEach(el=>countObs.observe(el));
+
+// ─── CARGO BARS ───
+const cargoBarsObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.cargo-bar-fill').forEach(fill=>{
+        const w=parseFloat(fill.dataset.width);
+        fill.style.transform=`scaleX(${w})`
+      });
+      cargoBarsObs.unobserve(e.target)
+    }
+  })
+},{threshold:0.3});
+const cargoBars=document.getElementById('cargo-bars');
+if(cargoBars)cargoBarsObs.observe(cargoBars);
+
+// ─── CTA TIMER ───
+const ctaTimer=document.getElementById('cta-timer');
+const startTime=Date.now();
+function updateTimer(){
+  const elapsed=Date.now()-startTime;
+  const h=Math.floor(elapsed/3600000).toString().padStart(2,'0');
+  const m=Math.floor((elapsed%3600000)/60000).toString().padStart(2,'0');
+  const s=Math.floor((elapsed%60000)/1000).toString().padStart(2,'0');
+  if(ctaTimer)ctaTimer.textContent=`T+${h}:${m}:${s} // COUNTING`
+}
+setInterval(updateTimer,1000);
+
+// ─── TERRAIN DIVIDER PARALLAX ───
+function parallaxDividers(){
+  document.querySelectorAll('.terrain-divider').forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    const progress=(rect.top+rect.height/2-window.innerHeight/2)/(window.innerHeight);
+    const img=el.querySelector('.td-img');
+    if(img)img.style.transform=`translateY(${progress*40}px)`
+  })
+}
+window.addEventListener('scroll',parallaxDividers,{passive:true});
+
+})();
 </script>
 </body>
 </html>
